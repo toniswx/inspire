@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   
-   ![alt text]([http://url/to/img.png](https://raw.githubusercontent.com/de-Padua/inspire-client/main/public/Inspire-Color.svg))
+   ![alt text]([http://url/to/img.png](https://raw.githubusercontent.com/de-Padua/inspire-client/main/public/Inspire-Color.svg)
  
 
   <h3 align="center">Best-README-Template</h3>
