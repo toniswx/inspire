@@ -30,8 +30,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  
-   ![alt text]([http://url/to/img.png](public/Inspire-Color.svg))
+  ![alt text](https://user-images.githubusercontent.com/106854024/282901155-4ba9a049-2b60-4639-8956-fe65d1b17c33.svg)
  
 
   <h3 align="center">Best-README-Template</h3>
