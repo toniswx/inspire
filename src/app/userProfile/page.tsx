@@ -3,14 +3,23 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { userAgent } from "next/server";
+import { boolean } from "zod";
+import { useUserData } from "@/store/userdata.store";
+type User = {
+  name: string;
+  email: string;
+  user_picture: string;
+};
+type Load = boolean;
 
 function Page() {
   const [loader, setLoader] = useState(false);
-
+  const [userData, setUserData] = useState<User | Load>(false);
   const router = useRouter();
+  const setCurrentUser = useUserData((state) => state.setUserData);
 
   useEffect(() => {
-
     fetch("http://localhost:3030/users", {
       method: "GET", // *GET, POST, PUT, DELETE, etc.
       credentials: "include",
@@ -21,9 +30,9 @@ function Page() {
     })
       .then((data) => data.json())
       .then((resp) => {
-        console.log(resp);
         if (resp.sucess === true) {
           setLoader(true);
+          setUserData(resp.data);
         } else {
           router.push("/");
         }
@@ -41,9 +50,10 @@ function Page() {
     })
       .then((data) => data.json())
       .then((resp) => {
-        
         if (resp.data === true) {
-          router.push("/");
+          localStorage.clear();
+          setCurrentUser(undefined);
+          router.push("/home");
         }
       })
       .catch((err) => console.log(err));
@@ -55,7 +65,7 @@ function Page() {
         <div>Loading...</div>
       ) : (
         <div>
-          <h2> User data here</h2>
+          {typeof userData === "boolean" ? "Loading" : userData.name}
           <Button
             onClick={() => {
               logout();

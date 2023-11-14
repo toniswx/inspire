@@ -1,10 +1,21 @@
-import Image from 'next/image'
-import Login from './login'
+'use client'
 
-export default function Home() {
+
+import React, { useEffect } from 'react'
+import { useRouter } from "next/navigation";
+
+function Page() {
+    
+    const router = useRouter()
+
+    useEffect(()=>{
+       router.push("/home")
+    },[])
+
+
   return (
-   <div className='w-full flex items-center justify-center h-screen' >
-     <Login />
-   </div>
+    <div></div>
   )
 }
+
+export default Page
