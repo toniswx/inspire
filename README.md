@@ -30,7 +30,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-![Inspire-Color](https://github.com/de-Padua/inspire-client/assets/106854024/1988eb64-5101-486b-a7e5-0746f77cd9dc)
+ 
  
 
   <h3 align="center">Best-README-Template</h3>
