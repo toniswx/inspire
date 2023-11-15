@@ -17,6 +17,9 @@ const userModel = new mongoose.Schema({
     age:{
         type:String,
         require:true 
+    },
+    cart: {
+        type:Array
     }
 
 })

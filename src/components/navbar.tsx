@@ -121,6 +121,7 @@ export default function Navbar() {
   const cartItems = useCartStore((state) => state.cart);
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
+  const setNewCart = useCartStore((state) => state.setNewCart);
 
   useEffect(() => {
     let total = 0;
@@ -152,6 +153,20 @@ export default function Navbar() {
     if (filteredArray) {
       deleteItemFromArray(filteredArray);
     } else {
+    }
+  };
+
+  const setNewSize = (oldItem: cartItem, newSize: string) => {
+    const newCart = cartItems;
+    
+    const newItem = { ...oldItem, size: newSize };
+    const index = newCart.findIndex((item) => item.name == oldItem.name);
+    // Make sure the index is found, than replace it
+    if (index > -1) {
+      newCart.splice(index, 1, newItem);
+      setNewCart(newCart);
+
+      
     }
   };
 
@@ -208,7 +223,6 @@ export default function Navbar() {
 
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem></NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="border">
               Categorias
@@ -277,24 +291,34 @@ export default function Navbar() {
                                         <p className=" h-fit text-xs line-clamp-2">
                                           {item.name}
                                         </p>
+                                       
 
-                                        <div className="flex items-center justify-between">
-                                          <p className="flex text-xs font-bold">
-                                            Tamanho
-                                          </p>
-                                          <Select>
-                                            <SelectTrigger className="w-12 h-7">
-                                              <SelectValue placeholder="M" />
-                                            </SelectTrigger>
-                                            <SelectContent className="w-10">
-                                              <SelectItem value="light">
-                                                M
-                                              </SelectItem>
-                                              <SelectItem value="dark">
-                                                P
-                                              </SelectItem>
-                                            </SelectContent>
-                                          </Select>
+                                        <div className="flex items-center justify-start my-3">
+                                          {item.sizes.map((size) => {
+                                            return (
+                                              <div
+                                               
+                                                 className="mr-2 font-mono"
+                                                onClick={() => {
+                                                  setNewSize(item, size);
+                                                }}
+                                              >
+                                                {size === item.size ? (
+                                                  <div className="text-xs border border-neutral-200 bg-zinc-200   rounded-3xl cursor-pointer">
+                                                    <p className="text-xs px-3 p-1 text-muted-foreground">
+                                                      {size}
+                                                    </p>
+                                                  </div>
+                                                ) : (
+                                                  <div className="text-xs border rounded-3xl cursor-pointer">
+                                                    <p className="text-xs px-3 p-1 text-muted-foreground">
+                                                      {size}
+                                                    </p>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                         <div className="flex ">
                                           {item.selectedColor === null ? (
@@ -303,13 +327,16 @@ export default function Navbar() {
                                               Selecione uma cor
                                             </a>
                                           ) : (
+                                            <div className="flex items-center justify-between w-full my-1">
+                                              <h2 className="text-xs">Cor</h2>
                                               <div
-                                              className="w-5 h-5 opacity-70"
-                                              style={{
-                                                backgroundColor:
-                                                  item.selectedColor,
-                                              }}
-                                            ></div>
+                                                className="w-5 h-5 opacity-70"
+                                                style={{
+                                                  backgroundColor:
+                                                    item.selectedColor,
+                                                }}
+                                              ></div>
+                                            </div>
                                           )}
                                         </div>
                                       </div>
@@ -329,6 +356,8 @@ export default function Navbar() {
                                               quantity: 1,
                                               colors: item.colors,
                                               selectedColor: item.selectedColor,
+                                              size: item.size,
+                                              sizes: item.sizes,
                                             });
                                           }}
                                           size={"icon"}

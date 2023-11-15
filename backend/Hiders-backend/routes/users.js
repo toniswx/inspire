@@ -65,6 +65,28 @@ app.patch("/users", jsonParser, async (req, res) => {
   }
 });
 
+
+app.patch("/update/usercart", jsonParser, async (req, res) => {
+  try {
+    const updatedUser = await USER_MODEL_DB.updateOne(
+      { email: req.body.email },
+      { cart: req.body.cart }
+    );
+    if (updatedUser) {
+      res.status(200).json({ data: updatedUser, message: "success" });
+    } else {
+      res.status(400).json({ data: null, message: "something went wrong" });
+    }
+  } catch (err) {
+    if (err) {
+      console.log(err);
+    }
+  }
+});
+
+
+
+
 app.delete("/users", jsonParser, async (req, res) => {
   try {
     const user = await USER_MODEL_DB.findOneAndDelete({

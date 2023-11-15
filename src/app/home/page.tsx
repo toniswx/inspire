@@ -47,6 +47,7 @@ export default function Home() {
         description: "",
         category: "Roupas Femininas",
         colors: ["blue", "red", "yellow"],
+        sizes: ["S", "M", "G"],
         image: [
           "https://img.ltwebstatic.com/images3_pi/2023/08/07/1b/1691390097cc0c8ca8b881603e515783c85dc8470f_thumbnail_600x.webp",
           "https://img.ltwebstatic.com/images3_pi/2023/08/07/be/169139010480cbfb43120f784cf09e4246ec1c609d_thumbnail_600x.webp",
@@ -63,6 +64,8 @@ export default function Home() {
         description: "",
         category: "Roupas Femininas",
         colors: ["blue", "red", "yellow"],
+        sizes: ["S", "M", "G"],
+
         image: [
           "https://img.lojasrenner.com.br/item/570599406/large/1.jpg",
           "https://img.lojasrenner.com.br/item/570599406/large/2.jpg",
@@ -91,7 +94,6 @@ export default function Home() {
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
 
-
   useEffect(() => {
     let total = 0;
     for (let K in cartItems) {
@@ -108,19 +110,38 @@ export default function Home() {
     if (findIfItemIsAlreadInCart) {
       console.log("item is alread into the cart");
     } else {
-      console.log("THIS IS GHEREREE")
+      console.log("THIS IS GHEREREE");
       addItem({
         name: newItem.name,
         image: newItem.image[0],
         price: newItem.price,
         id: newItem.id,
-        quantity: 2,
+        quantity: 1,
         colors: newItem.colors,
-        selectedColor:"yellow"
+        selectedColor: newItem.colors[0],
+        size: "S",
+        sizes: newItem.sizes,
       });
     }
   };
+  const updateItemIntoCart = (newItem: cartItem) => {
+    const OldItem = cartItems.find((item) => {
+      return item.name === newItem.name;
+    });
 
+    if (OldItem)
+      addItem({
+        name: OldItem.name,
+        image: OldItem.image[0],
+        price: OldItem.price,
+        id: OldItem.id,
+        quantity: OldItem.quantity,
+        colors: OldItem.colors,
+        selectedColor: OldItem.selectedColor,
+        size: OldItem.size,
+        sizes: OldItem.sizes,
+      });
+  };
 
   useEffect(() => {
     fetch("http://localhost:3030/users/login", {
@@ -201,8 +222,9 @@ export default function Home() {
                             id: item.id,
                             quantity: 1,
                             colors: item.colors,
-                            selectedColor:"yellow"
-                            
+                            selectedColor: "yellow",
+                            size: item.sizes[0],
+                            sizes: item.sizes,
                           });
                         }}
                         onMouseEnter={() => {
