@@ -1,0 +1,51 @@
+GET http://localhost:3030/users
+Credentials:include
+
+
+
+###
+
+POST http://localhost:3030/users
+Content-Type: application/json 
+Credentials:include
+
+
+{
+    "name":"paulo",
+    "email":"Pedro10@example.com",
+    "password":"123123",
+    "age":"23"
+}
+
+
+### 
+
+DELETE http://localhost:3030/users
+Content-Type: application/json
+
+{
+    "email":"carol@example.com"
+}
+
+### 
+
+PATCH  http://localhost:3030/users
+Content-Type: application/json
+
+{
+    "email":"Pedro@example.com",
+    "name":"Pedro Limares"
+}
+
+### 
+
+POST http://localhost:3030/users/login
+Content-Type: application/json
+Credentials:include
+
+
+{
+    "email":"Pedro@example.com",
+    "password":"linn@123"
+}
+
