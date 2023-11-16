@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CarFront, ShoppingCart } from "lucide-react";
 import { useUserData } from "@/store/userdata.store";
+
 import {
   Cloud,
   CreditCard,
@@ -134,6 +135,7 @@ export default function Navbar() {
   }, [cartItems.length, addItem, deleteItemFromArray]);
 
   useEffect(() => {
+    console.log("change");
     if (userData === undefined) return;
     fetch("http://localhost:3030/update/usercart", {
       method: "PATCH", // *GET, POST, PUT, DELETE, etc.
@@ -144,7 +146,7 @@ export default function Navbar() {
       },
       body: JSON.stringify({ email: userData.email, cart: cartItems }),
     });
-  }, [cartItems.length]);
+  }, [cartItems]);
 
   const deleteItemFromCart = (itemToDelete: cartItem) => {
     const filteredArray = cartItems.filter((item) => {
@@ -158,15 +160,13 @@ export default function Navbar() {
 
   const setNewSize = (oldItem: cartItem, newSize: string) => {
     const newCart = cartItems;
-    
+
     const newItem = { ...oldItem, size: newSize };
     const index = newCart.findIndex((item) => item.name == oldItem.name);
     // Make sure the index is found, than replace it
     if (index > -1) {
       newCart.splice(index, 1, newItem);
       setNewCart(newCart);
-
-      
     }
   };
 
@@ -241,193 +241,157 @@ export default function Navbar() {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className="px-6"
-                  disabled={domLoaded ? false : true}
-                >
-                  {domLoaded && <ShoppingCart className="mr-2 h-4 w-4" />}{" "}
-                  {domLoaded ? (
-                    cartItems.length
-                  ) : (
-                    <svg
-                      aria-hidden="true"
-                      className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                      viewBox="0 0 100 101"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                        fill="currentColor"
-                      />
-                      <path
-                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                        fill="currentFill"
-                      />
-                    </svg>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="">
-                <SheetHeader>
-                  <SheetTitle>Seu carrinho de compras</SheetTitle>
-                </SheetHeader>
-                {
-                  <Suspense fallback={<p>Loading..</p>}>
-                    <div className="flex flex-col  h-full">
-                      <ScrollArea className=" h-5/6 px-3">
-                        <div className=" ">
-                          {domLoaded ? (
-                            cartItems.map((item: cartItem) => {
-                              return (
-                                <>
-                                  <div className="h-36 w-full mt-8  flex justify-between  rounded-md ">
-                                    <div className="flex flex-col justify-between w-10/12 pr-4">
-                                      <div>
-                                        <p className=" h-fit text-xs line-clamp-2">
-                                          {item.name}
-                                        </p>
-                                       
+          {userData === undefined ? (
+            ""
+          ) : (
+            <NavigationMenuItem>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className="px-6"
+                    disabled={domLoaded ? false : true}
+                  >
+                    {domLoaded && <ShoppingCart className="mr-2 h-4 w-4" />}{" "}
+                    {domLoaded ? (
+                      cartItems.length
+                    ) : (
+                      <svg
+                        aria-hidden="true"
+                        className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="currentColor"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentFill"
+                        />
+                      </svg>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="">
+                  <SheetHeader>
+                    <SheetTitle>Seu carrinho de compras</SheetTitle>
+                  </SheetHeader>
+                  {
+                    <Suspense fallback={<p>Loading..</p>}>
+                      <div className="flex flex-col  h-full">
+                        <ScrollArea className=" h-5/6 px-3">
+                          <div className=" ">
+                            {domLoaded ? (
+                              cartItems.map((item: cartItem) => {
+                                return (
+                                  <>
+                                    <div className="h-36 w-full mt-8  flex justify-between  rounded-md ">
+                                      <div className="flex flex-col justify-between w-10/12 pr-4">
+                                        <div>
+                                          <p className=" h-fit text-xs line-clamp-2">
+                                            {item.name}
+                                          </p>
 
-                                        <div className="flex items-center justify-start my-3">
-                                          {item.sizes.map((size) => {
-                                            return (
+                                          <div className="flex  items-center justify-center my-1  w-fit  py-1 rounded-full">
+                                            <div className="text-xs font-bold">
+                                              <p>{item.size} / </p>
+                                            </div>
+                                            <div className="w-5 h-5 mx-1 p-[1px]  rounded-full border ">
                                               <div
-                                               
-                                                 className="mr-2 font-mono"
-                                                onClick={() => {
-                                                  setNewSize(item, size);
-                                                }}
-                                              >
-                                                {size === item.size ? (
-                                                  <div className="text-xs border border-neutral-200 bg-zinc-200   rounded-3xl cursor-pointer">
-                                                    <p className="text-xs px-3 p-1 text-muted-foreground">
-                                                      {size}
-                                                    </p>
-                                                  </div>
-                                                ) : (
-                                                  <div className="text-xs border rounded-3xl cursor-pointer">
-                                                    <p className="text-xs px-3 p-1 text-muted-foreground">
-                                                      {size}
-                                                    </p>
-                                                  </div>
-                                                )}
-                                              </div>
-                                            );
-                                          })}
-                                        </div>
-                                        <div className="flex ">
-                                          {item.selectedColor === null ? (
-                                            <a className="text-xs my-2 border-b cursor-pointer ">
-                                              {" "}
-                                              Selecione uma cor
-                                            </a>
-                                          ) : (
-                                            <div className="flex items-center justify-between w-full my-1">
-                                              <h2 className="text-xs">Cor</h2>
-                                              <div
-                                                className="w-5 h-5 opacity-70"
+                                                className="w-full h-full rounded-full "
                                                 style={{
                                                   backgroundColor:
-                                                    item.selectedColor,
+                                                    item!.selectedColor!,
                                                 }}
                                               ></div>
                                             </div>
-                                          )}
-                                        </div>
-                                      </div>
-
-                                      <div className="flex items-center justify-between w-full ">
-                                        <div className="flex ">
-                                          <p>{format.format(item.price)}</p>
+                                          </div>
                                         </div>
 
-                                        <Button
-                                          onClick={() => {
-                                            deleteItemFromCart({
-                                              name: item.name,
-                                              image: item.image,
-                                              price: item.price,
-                                              id: item.id,
-                                              quantity: 1,
-                                              colors: item.colors,
-                                              selectedColor: item.selectedColor,
-                                              size: item.size,
-                                              sizes: item.sizes,
-                                            });
-                                          }}
-                                          size={"icon"}
-                                          variant={"destructive"}
-                                          className="h-7"
-                                        >
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="13"
-                                            height="13"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            className="lucide lucide-trash-2"
+                                        <div className="flex items-center justify-between w-full ">
+                                          <div className="flex ">
+                                            <p>{format.format(item.price)}</p>
+                                          </div>
+
+                                          <Button
+                                            onClick={() => {
+                                              deleteItemFromCart({
+                                                name: item.name,
+                                                image: item.image,
+                                                price: item.price,
+                                                id: item.id,
+                                                quantity: 1,
+                                                colors: item.colors,
+                                                selectedColor:
+                                                  item.selectedColor,
+                                                size: item.size,
+                                                sizes: item.sizes,
+                                              });
+                                            }}
+                                            size={"icon"}
+                                            variant={"destructive"}
+                                            className="h-7"
                                           >
-                                            <path d="M3 6h18" />
-                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                                            <line
-                                              x1="10"
-                                              x2="10"
-                                              y1="11"
-                                              y2="17"
-                                            />
-                                            <line
-                                              x1="14"
-                                              x2="14"
-                                              y1="11"
-                                              y2="17"
-                                            />
-                                          </svg>
-                                        </Button>
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="13"
+                                              height="13"
+                                              viewBox="0 0 24 24"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              stroke-width="2"
+                                              stroke-linecap="round"
+                                              stroke-linejoin="round"
+                                              className="lucide lucide-trash-2"
+                                            >
+                                              <path d="M3 6h18" />
+                                              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                              <line
+                                                x1="10"
+                                                x2="10"
+                                                y1="11"
+                                                y2="17"
+                                              />
+                                              <line
+                                                x1="14"
+                                                x2="14"
+                                                y1="11"
+                                                y2="17"
+                                              />
+                                            </svg>
+                                          </Button>
+                                        </div>
                                       </div>
+
+                                    
                                     </div>
+                                  </>
+                                );
+                              })
+                            ) : (
+                              <p> No items in the cart </p>
+                            )}
+                          </div>
+                        </ScrollArea>
 
-                                    <Image
-                                      draggable
-                                      src={item.image}
-                                      width={1000}
-                                      height={400}
-                                      alt={item.name}
-                                      className=" w-28 h-full object-cover  transition-all"
-                                      unoptimized
-                                    />
-                                  </div>
-                                </>
-                              );
-                            })
-                          ) : (
-                            <p> No items in the cart </p>
-                          )}
+                        <Separator />
+                        <div className="px-2 my-6">
+                          <h2>Total : {format.format(totalValue)} </h2>
+                          <Button className="w-full my-4">
+                            Finalizar compra
+                          </Button>
                         </div>
-                      </ScrollArea>
-
-                      <Separator />
-                      <div className="px-2 my-6">
-                        <h2>Total : {format.format(totalValue)} </h2>
-                        <Button className="w-full my-4">
-                          Finalizar compra
-                        </Button>
                       </div>
-                    </div>
-                  </Suspense>
-                }
-              </SheetContent>
-            </Sheet>
-          </NavigationMenuItem>
+                    </Suspense>
+                  }
+                </SheetContent>
+              </Sheet>
+            </NavigationMenuItem>
+          )}
           <NavigationMenuItem asChild>
             {domLoaded && (
               <div>

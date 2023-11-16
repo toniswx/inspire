@@ -7,6 +7,18 @@ import { Suspense } from "react";
 import { useCartStore } from "../../store/store";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useUserData } from "@/store/userdata.store";
 import {
   Select,
@@ -25,32 +37,54 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+////
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { DialogClose } from "@/components/ui/dialog";
+
 export default function Home() {
   const [products, setProducts] = useState<product[] | null>(null);
   const [curretIndex, setCurrentIndex] = useState(0);
   const [mouseIsActive, setMouseActive] = useState(false);
+  const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<number | undefined>(undefined);
+
   const [changeGlobalIndex, setChangeGlobalIndex] = useState<null | number>(
     null
   );
+  const [open, setOpen] = useState(false);
 
   //work-around but try to solve this
   const [domLoaded, setDomLoaded] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
+  const [selectedItem, setSelectedItem] = useState<cartItem | null>(null);
 
   useEffect(() => {
     setDomLoaded(true);
     const items = [
       {
         id: 1,
-        title: "Essnce Plus Gola Xaile Frente Aberta Blazer",
-        price: 91.76,
+        title: "Blusa Cropped com Fio Metalizado e Argola na Lateral Off White",
+        price: 99.76,
         description: "",
         category: "Roupas Femininas",
-        colors: ["blue", "red", "yellow"],
+        colors: ["#FFF"],
         sizes: ["S", "M", "G"],
         image: [
-          "https://img.ltwebstatic.com/images3_pi/2023/08/07/1b/1691390097cc0c8ca8b881603e515783c85dc8470f_thumbnail_600x.webp",
-          "https://img.ltwebstatic.com/images3_pi/2023/08/07/be/169139010480cbfb43120f784cf09e4246ec1c609d_thumbnail_600x.webp",
+          "https://img.lojasrenner.com.br/item/879703574/large/3.jpg",
+          "https://img.lojasrenner.com.br/item/879703574/large/4.jpg",
         ],
         rating: {
           rate: 5,
@@ -58,17 +92,17 @@ export default function Home() {
         },
       },
       {
-        id: 1,
-        title: "yellow shirt",
-        price: 91.76,
+        id: 2,
+        title: "Blusa Cropped Básica sem Manga em Algodão com Gola Alta Roxo",
+        price: 30.76,
         description: "",
         category: "Roupas Femininas",
-        colors: ["blue", "red", "yellow"],
+        colors: ["#235dfc", "#be29e3"],
         sizes: ["S", "M", "G"],
 
         image: [
-          "https://img.lojasrenner.com.br/item/570599406/large/1.jpg",
-          "https://img.lojasrenner.com.br/item/570599406/large/2.jpg",
+          "https://img.lojasrenner.com.br/item/853251338/large/3.jpg",
+          "https://img.lojasrenner.com.br/item/853251338/large/4.jpg",
         ],
         rating: {
           rate: 5,
@@ -87,6 +121,7 @@ export default function Home() {
   });
 
   const setUserData = useUserData((state) => state.setUserData);
+  const setUserCart = useCartStore((state) => state.setNewCart);
   const setGlobalLoadingStateForUserFetchingData = useUserData(
     (state) => state.switchLoadingState
   );
@@ -103,46 +138,6 @@ export default function Home() {
     setTotalValue(total);
   }, [cartItems.length, addItem, deleteItemFromArray, domLoaded]);
 
-  const handleAddItemToCart = (newItem: cartItem) => {
-    const findIfItemIsAlreadInCart = cartItems.find((item) => {
-      return item.name === newItem.name;
-    });
-    if (findIfItemIsAlreadInCart) {
-      console.log("item is alread into the cart");
-    } else {
-      console.log("THIS IS GHEREREE");
-      addItem({
-        name: newItem.name,
-        image: newItem.image[0],
-        price: newItem.price,
-        id: newItem.id,
-        quantity: 1,
-        colors: newItem.colors,
-        selectedColor: newItem.colors[0],
-        size: "S",
-        sizes: newItem.sizes,
-      });
-    }
-  };
-  const updateItemIntoCart = (newItem: cartItem) => {
-    const OldItem = cartItems.find((item) => {
-      return item.name === newItem.name;
-    });
-
-    if (OldItem)
-      addItem({
-        name: OldItem.name,
-        image: OldItem.image[0],
-        price: OldItem.price,
-        id: OldItem.id,
-        quantity: OldItem.quantity,
-        colors: OldItem.colors,
-        selectedColor: OldItem.selectedColor,
-        size: OldItem.size,
-        sizes: OldItem.sizes,
-      });
-  };
-
   useEffect(() => {
     fetch("http://localhost:3030/users/login", {
       method: "POST",
@@ -156,9 +151,11 @@ export default function Home() {
       .then((resp) => {
         if (resp.sucess === true) {
           setUserData(resp.data);
+          setUserCart(resp.data.cart);
           setGlobalLoadingStateForUserFetchingData(false);
         } else if (resp.sucess === false) {
           setGlobalLoadingStateForUserFetchingData(false);
+          setUserCart([]);
           setUserData(undefined);
         }
       })
@@ -167,6 +164,43 @@ export default function Home() {
         }
       });
   }, []);
+
+  const formSchema = z.object({
+    color: z.string(),
+    size: z.string(),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    if (selectedItem === null) return;
+
+    const newItem = {
+      ...selectedItem,
+      selectedColor: values.color,
+      size: values.size,
+    };
+
+    const findIfItemIsAlreadInCart = cartItems.find((item) => {
+      return item.name === selectedItem.name;
+    });
+
+    if (findIfItemIsAlreadInCart) {
+      console.log("item is alread into the cart");
+    } else {
+      addItem(newItem);
+    }
+
+    console.log(newItem);
+    setSelectedItem(null);
+    setOpen(false);
+  }
+
+  useEffect(() => {
+    console.log(selectedItem);
+  }, [selectedItem]);
 
   return (
     <div className="w-full flex items-center justify-center flex-col">
@@ -215,15 +249,17 @@ export default function Home() {
                       />
                       <Button
                         onClick={() => {
-                          handleAddItemToCart({
+                          setCurrentPageIndexToOpenModal(_index)
+                          setOpen(true)
+                          setSelectedItem({
                             name: item.title,
                             image: item.image,
                             price: item.price,
                             id: item.id,
                             quantity: 1,
                             colors: item.colors,
-                            selectedColor: "yellow",
-                            size: item.sizes[0],
+                            selectedColor: null,
+                            size: null,
                             sizes: item.sizes,
                           });
                         }}
@@ -233,14 +269,156 @@ export default function Home() {
                         onMouseLeave={() => {
                           setChangeGlobalIndex(null);
                         }}
+                        
                         className={
                           changeGlobalIndex === _index
                             ? "absolute bottom-2 opacity-100 "
                             : "opacity-0 absolute "
                         }
                       >
-                        Add to cart
+                        Adicionar ao carrinho
                       </Button>
+                      {PageIndexToOpenModal === _index ? (
+                        <AlertDialog open={open} onOpenChange={setOpen}>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogDescription asChild>
+                                <div className="w-full h-full  flex justify-between">
+                                  <div>
+                                    <h2>{item.title}</h2>
+                                    <p>{item.description}</p>
+                                    <p className="text-2xl my-4 font-bold text-black">
+                                      {format.format(item.price)}
+                                    </p>
+                                    <div className="flex my-5 flex-col">
+                                      <Form {...form} key={item.title}>
+                                        <form
+                                          onSubmit={form.handleSubmit(onSubmit)}
+                                          className="space-y-8"
+                                        >
+                                          <FormField
+                                            control={form.control}
+                                            name="color"
+                                            render={({ field }) => (
+                                              <FormItem>
+                                                <FormLabel>
+                                                  {" "}
+                                                  Cores disponíveis
+                                                </FormLabel>
+                                                <FormControl>
+                                                  <div className="flex">
+                                                    <RadioGroup
+                                                      className="w-full"
+                                                      defaultValue={undefined}
+                                                      onValueChange={
+                                                        field.onChange
+                                                      }
+                                                    >
+                                                      <div className="flex items-center space-x-2">
+                                                        {item.colors.map(
+                                                          (color) => {
+                                                            return (
+                                                              <div
+                                                                style={{
+                                                                  backgroundColor:
+                                                                    color,
+                                                                }}
+                                                                className="h-5 w-5 flex items-center justify-center px-5 py-5 border"
+                                                              >
+                                                                {" "}
+                                                                <RadioGroupItem
+                                                                  className="border-none w-10 h-10  rounded-none  text-2xl  "
+                                                                  value={color}
+                                                                  id={color}
+                                                                />
+                                                              </div>
+                                                            );
+                                                          }
+                                                        )}
+                                                      </div>
+                                                    </RadioGroup>
+                                                  </div>
+                                                </FormControl>
+
+                                                <FormMessage />
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <FormField
+                                            control={form.control}
+                                            name="size"
+                                            render={({ field }) => (
+                                              <FormItem>
+                                                <FormLabel>
+                                                  Escolha um tamanho
+                                                </FormLabel>
+                                                <FormControl>
+                                                  <Select
+                                                    defaultValue={undefined}
+                                                    onValueChange={
+                                                      field.onChange
+                                                    }
+                                                  >
+                                                    <SelectTrigger className="w-[180px]">
+                                                      <SelectValue placeholder="Escolha um tamanho" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                      {item.sizes.map(
+                                                        (size) => {
+                                                          return (
+                                                            <SelectItem
+                                                              value={size}
+                                                            >
+                                                              {size}
+                                                            </SelectItem>
+                                                          );
+                                                        }
+                                                      )}
+                                                    </SelectContent>
+                                                  </Select>
+                                                </FormControl>
+
+                                                <FormMessage />
+                                              </FormItem>
+                                            )}
+                                          />
+
+                                          <Button
+                                            type="submit"
+                                            onClick={() => {
+                                              if (
+                                                form.formState
+                                                  .isSubmitSuccessful
+                                              ) {
+                                                form.resetField("size");
+                                                form.resetField("color");
+                                              }
+                                            }}
+                                          >
+                                            Adicionar ao carrinho
+                                          </Button>
+                                        </form>
+                                      </Form>
+
+                                      <div className="flex "></div>
+                                      <div></div>
+                                    </div>
+                                  </div>
+                                  <div className="h-1/2 w-full">
+                                    <Image
+                                      src={item.image[0]}
+                                      alt="image"
+                                      height={2000}
+                                      width={2000}
+                                      className="object-contain"
+                                    />
+                                  </div>
+                                </div>
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      ) : null}
                     </div>
                     <div className="my-2">
                       <p className="font-semibold text-xs ">{item.category}</p>

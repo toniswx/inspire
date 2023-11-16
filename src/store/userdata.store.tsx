@@ -10,26 +10,16 @@ interface User {
   switchLoadingState: (isLoading: boolean) => void;
 }
 
-export const useUserData = create<User>()(
-  devtools(
-    persist(
-      (set) => ({
-        user: undefined,
-        isLoading: false,
-        switchLoadingState: (by) => set((state) => ({ isLoading: by })),
+export const useUserData = create<User>()((set) => ({
+  user: undefined,
+  isLoading: false,
+  switchLoadingState: (by) => set((state) => ({ isLoading: by })),
 
-        setUserData: (by) => {
-          if (by === undefined) {
-            set((state) => ({ user: undefined }));
-          } else {
-            set((state) => ({ user: { name: by.name, email: by.email } }));
-          }
-        },
-      }),
-
-      {
-        name: "basic_user_data",
-      }
-    )
-  )
-);
+  setUserData: (by) => {
+    if (by === undefined) {
+      set((state) => ({ user: undefined }));
+    } else {
+      set((state) => ({ user: { name: by.name, email: by.email } }));
+    }
+  },
+}));

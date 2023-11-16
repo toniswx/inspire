@@ -177,6 +177,7 @@ app.post("/users/login", jsonParser, async (req, res) => {
           data: {
             name: userDataFromDb.name,
             email: userDataFromDb.email,
+            cart:userDataFromDb.cart
           },
         });
     }
