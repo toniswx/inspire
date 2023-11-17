@@ -7,15 +7,16 @@ import { useCartStore } from "../store/store";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
+import useGetProducts from "@/app/hooks/useGetProducts";
 import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-  } from "@/components/ui/form";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,8 +42,6 @@ import * as z from "zod";
 import { useUserData } from "@/store/userdata.store";
 import { useRouter } from "next/navigation";
 function ProducsList() {
-  const [products, setProducts] = useState<product[] | null>(null);
-  const { toast } = useToast();
   const [curretIndex, setCurrentIndex] = useState(0);
   const [mouseIsActive, setMouseActive] = useState(false);
   const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<
@@ -53,37 +52,11 @@ function ProducsList() {
     null
   );
   const [open, setOpen] = useState(false);
-
-  //work-around but try to solve this
   const [domLoaded, setDomLoaded] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
   const [selectedItem, setSelectedItem] = useState<cartItem | null>(null);
-
-  useEffect(() => {
-    fetch("http://localhost:3030/products", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      }, // include, *same-origin, omit
-      // body data type must match "Content-Type" header
-    })
-      .then((data) => data.json())
-      .then((resp) => {
-        setProducts(resp);
-      })
-      .catch((err) => {
-        if (err) {
-        }
-      });
-  }, []);
-
-  let format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "BRL",
-  });
-
+  const products = useGetProducts();
   const router = useRouter();
-
   const setUserData = useUserData((state) => state.setUserData);
   const setUserCart = useCartStore((state) => state.setNewCart);
   const setGlobalLoadingStateForUserFetchingData = useUserData(
@@ -92,6 +65,7 @@ function ProducsList() {
   const cartItems = useCartStore((state) => state.cart);
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
+  const { toast } = useToast();
 
   useEffect(() => {
     let total = 0;
@@ -101,7 +75,12 @@ function ProducsList() {
 
     setTotalValue(total);
   }, [cartItems.length, addItem, deleteItemFromArray, domLoaded]);
-	
+
+  let format = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "BRL",
+  });
+
   const formSchema = z.object({
     color: z.string(),
     size: z.string(),
