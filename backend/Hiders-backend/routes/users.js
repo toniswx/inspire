@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const app = express.Router();
 const USER_MODEL_DB = require("../models/user_model");
+const productsDB = require("../models/products_model");
 const bodyParser = require("body-parser");
 const sessionValidation = require("../models/session_model");
 const cookieParser = require("cookie-parser");
@@ -65,7 +66,6 @@ app.patch("/users", jsonParser, async (req, res) => {
   }
 });
 
-
 app.patch("/update/usercart", jsonParser, async (req, res) => {
   try {
     const updatedUser = await USER_MODEL_DB.updateOne(
@@ -83,9 +83,6 @@ app.patch("/update/usercart", jsonParser, async (req, res) => {
     }
   }
 });
-
-
-
 
 app.delete("/users", jsonParser, async (req, res) => {
   try {
@@ -105,8 +102,6 @@ app.delete("/users", jsonParser, async (req, res) => {
 });
 
 app.post("/users", jsonParser, async (req, res) => {
-
-
   const userDataFromDb = await USER_MODEL_DB.findOne({
     email: req.body.email,
   });
@@ -153,8 +148,8 @@ app.post("/users", jsonParser, async (req, res) => {
 
 app.post("/users/login", jsonParser, async (req, res) => {
   const cookie = req.cookies["SESSION_ID"];
-  
-  const expirationDate = new Date(Date.now() + 1000 * 60 * 1000)
+
+  const expirationDate = new Date(Date.now() + 1000 * 60 * 1000);
 
   const validateSession = await sessionValidation.findOne({
     SESSION_ID: cookie,
@@ -177,7 +172,7 @@ app.post("/users/login", jsonParser, async (req, res) => {
           data: {
             name: userDataFromDb.name,
             email: userDataFromDb.email,
-            cart:userDataFromDb.cart
+            cart: userDataFromDb.cart,
           },
         });
     }
@@ -210,7 +205,7 @@ app.post("/users/login", jsonParser, async (req, res) => {
           console.log(res);
           res
             .cookie("SESSION_ID", newSession.SESSION_ID, {
-              expires:expirationDate,
+              expires: expirationDate,
               secure: true,
               httpOnly: true,
               sameSite: "none",
@@ -232,6 +227,13 @@ app.post("/users/login", jsonParser, async (req, res) => {
       }
     );
   }
+});
+
+app.get("/products", jsonParser, async (req, res) => {
+  console.log("this is comming here")
+  const products = await productsDB.find();
+
+  res.json(products);
 });
 
 module.exports = app;

@@ -1,12 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    images: {
-      domains: ['fakestoreapi.com','img.ltwebstatic.com',"img.lojasrenner.com.br"],
-    },
-}
+  reactStrictMode: true,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fakestoreapi.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.lojasrenner.com.br",
+      },
+      {
+        protocol: "https",
+        hostname: "img.ltwebstatic.com",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
-
-
+module.exports = nextConfig;

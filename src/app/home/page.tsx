@@ -8,6 +8,8 @@ import { useCartStore } from "../../store/store";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/components/ui/use-toast";
+import ProductsList from "@/components/homePageProducts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,11 +57,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { DialogClose } from "@/components/ui/dialog";
 
+////
+
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const { toast } = useToast();
   const [products, setProducts] = useState<product[] | null>(null);
   const [curretIndex, setCurrentIndex] = useState(0);
   const [mouseIsActive, setMouseActive] = useState(false);
-  const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<number | undefined>(undefined);
+  const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<
+    number | undefined
+  >(undefined);
 
   const [changeGlobalIndex, setChangeGlobalIndex] = useState<null | number>(
     null
@@ -72,47 +81,21 @@ export default function Home() {
   const [selectedItem, setSelectedItem] = useState<cartItem | null>(null);
 
   useEffect(() => {
-    setDomLoaded(true);
-    const items = [
-      {
-        id: 1,
-        title: "Blusa Cropped com Fio Metalizado e Argola na Lateral Off White",
-        price: 99.76,
-        description: "",
-        category: "Roupas Femininas",
-        colors: ["#FFF"],
-        sizes: ["S", "M", "G"],
-        image: [
-          "https://img.lojasrenner.com.br/item/879703574/large/3.jpg",
-          "https://img.lojasrenner.com.br/item/879703574/large/4.jpg",
-        ],
-        rating: {
-          rate: 5,
-          count: 0,
-        },
-      },
-      {
-        id: 2,
-        title: "Blusa Cropped Básica sem Manga em Algodão com Gola Alta Roxo",
-        price: 30.76,
-        description: "",
-        category: "Roupas Femininas",
-        colors: ["#235dfc", "#be29e3"],
-        sizes: ["S", "M", "G"],
-
-        image: [
-          "https://img.lojasrenner.com.br/item/853251338/large/3.jpg",
-          "https://img.lojasrenner.com.br/item/853251338/large/4.jpg",
-        ],
-        rating: {
-          rate: 5,
-          count: 0,
-        },
-      },
-    ];
-    const x = JSON.stringify(items);
-    const parse = JSON.parse(x);
-    setProducts(parse);
+    fetch("http://localhost:3030/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }, // include, *same-origin, omit
+      // body data type must match "Content-Type" header
+    })
+      .then((data) => data.json())
+      .then((resp) => {
+        setProducts(resp);
+      })
+      .catch((err) => {
+        if (err) {
+        }
+      });
   }, []);
 
   let format = new Intl.NumberFormat("en-US", {
@@ -120,6 +103,7 @@ export default function Home() {
     currency: "BRL",
   });
 
+  const router = useRouter();
   const setUserData = useUserData((state) => state.setUserData);
   const setUserCart = useCartStore((state) => state.setNewCart);
   const setGlobalLoadingStateForUserFetchingData = useUserData(
@@ -188,252 +172,34 @@ export default function Home() {
     });
 
     if (findIfItemIsAlreadInCart) {
-      console.log("item is alread into the cart");
+      const filterCart = cartItems.filter((item) => {
+        return item.name !== selectedItem.name;
+      });
+
+      const newCart = [...filterCart, newItem];
+
+      setUserCart(newCart);
+      toast({
+        title: "Item atualizado no seu cart",
+        description: "Friday, February 10, 2023 at 5:57 PM",
+      });
     } else {
       addItem(newItem);
+      toast({
+        title: "Item adicionado ao seu cart",
+        description: "Friday, February 10, 2023 at 5:57 PM",
+      });
     }
 
-    console.log(newItem);
     setSelectedItem(null);
     setOpen(false);
   }
 
-  useEffect(() => {
-    console.log(selectedItem);
-  }, [selectedItem]);
-
   return (
     <div className="w-full flex items-center justify-center flex-col">
       <div className=" 2xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-2  sm:grid-cols-2  grid grid-cols-1 items-center justify-center gap-2 mx-8 w-10/12  mt-20">
-        {products === null
-          ? "Loading..."
-          : products.map((item, _index) => {
-              return (
-                <div
-                  className="  flex  w-full  h-full  transition-all cursor-pointer mr-11 "
-                  key={_index}
-                >
-                  <div className="w-full p-2 flex flex-col justify-between">
-                    <div className="w-full h-96 relative   items-center justify-center flex   mb-4 transition-all  ">
-                      <Image
-                        onMouseEnter={() => {
-                          setChangeGlobalIndex(_index);
-                        }}
-                        onMouseLeave={() => {
-                          setChangeGlobalIndex(null);
-                        }}
-                        draggable
-                        src={
-                          _index !== changeGlobalIndex
-                            ? item.image[0]
-                            : item.image[curretIndex]
-                        }
-                        width={1000}
-                        height={400}
-                        alt={item.title}
-                        className={
-                          changeGlobalIndex === _index
-                            ? " w-full h-full absolute left-0 object-cover transition delay-700 duration-700  opacity-0"
-                            : " w-full h-full absolute left-0 object-cover "
-                        }
-                        unoptimized
-                      />
-                      <Image
-                        draggable
-                        src={item.image[1]}
-                        width={1000}
-                        height={400}
-                        alt={item.title}
-                        className=" w-full h-full object-cover  transition-all"
-                        unoptimized
-                      />
-                      <Button
-                        onClick={() => {
-                          setCurrentPageIndexToOpenModal(_index)
-                          setOpen(true)
-                          setSelectedItem({
-                            name: item.title,
-                            image: item.image,
-                            price: item.price,
-                            id: item.id,
-                            quantity: 1,
-                            colors: item.colors,
-                            selectedColor: null,
-                            size: null,
-                            sizes: item.sizes,
-                          });
-                        }}
-                        onMouseEnter={() => {
-                          setChangeGlobalIndex(_index);
-                        }}
-                        onMouseLeave={() => {
-                          setChangeGlobalIndex(null);
-                        }}
-                        
-                        className={
-                          changeGlobalIndex === _index
-                            ? "absolute bottom-2 opacity-100 "
-                            : "opacity-0 absolute "
-                        }
-                      >
-                        Adicionar ao carrinho
-                      </Button>
-                      {PageIndexToOpenModal === _index ? (
-                        <AlertDialog open={open} onOpenChange={setOpen}>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogDescription asChild>
-                                <div className="w-full h-full  flex justify-between">
-                                  <div>
-                                    <h2>{item.title}</h2>
-                                    <p>{item.description}</p>
-                                    <p className="text-2xl my-4 font-bold text-black">
-                                      {format.format(item.price)}
-                                    </p>
-                                    <div className="flex my-5 flex-col">
-                                      <Form {...form} key={item.title}>
-                                        <form
-                                          onSubmit={form.handleSubmit(onSubmit)}
-                                          className="space-y-8"
-                                        >
-                                          <FormField
-                                            control={form.control}
-                                            name="color"
-                                            render={({ field }) => (
-                                              <FormItem>
-                                                <FormLabel>
-                                                  {" "}
-                                                  Cores disponíveis
-                                                </FormLabel>
-                                                <FormControl>
-                                                  <div className="flex">
-                                                    <RadioGroup
-                                                      className="w-full"
-                                                      defaultValue={undefined}
-                                                      onValueChange={
-                                                        field.onChange
-                                                      }
-                                                    >
-                                                      <div className="flex items-center space-x-2">
-                                                        {item.colors.map(
-                                                          (color) => {
-                                                            return (
-                                                              <div
-                                                                style={{
-                                                                  backgroundColor:
-                                                                    color,
-                                                                }}
-                                                                className="h-5 w-5 flex items-center justify-center px-5 py-5 border"
-                                                              >
-                                                                {" "}
-                                                                <RadioGroupItem
-                                                                  className="border-none w-10 h-10  rounded-none  text-2xl  "
-                                                                  value={color}
-                                                                  id={color}
-                                                                />
-                                                              </div>
-                                                            );
-                                                          }
-                                                        )}
-                                                      </div>
-                                                    </RadioGroup>
-                                                  </div>
-                                                </FormControl>
-
-                                                <FormMessage />
-                                              </FormItem>
-                                            )}
-                                          />
-                                          <FormField
-                                            control={form.control}
-                                            name="size"
-                                            render={({ field }) => (
-                                              <FormItem>
-                                                <FormLabel>
-                                                  Escolha um tamanho
-                                                </FormLabel>
-                                                <FormControl>
-                                                  <Select
-                                                    defaultValue={undefined}
-                                                    onValueChange={
-                                                      field.onChange
-                                                    }
-                                                  >
-                                                    <SelectTrigger className="w-[180px]">
-                                                      <SelectValue placeholder="Escolha um tamanho" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                      {item.sizes.map(
-                                                        (size) => {
-                                                          return (
-                                                            <SelectItem
-                                                              value={size}
-                                                            >
-                                                              {size}
-                                                            </SelectItem>
-                                                          );
-                                                        }
-                                                      )}
-                                                    </SelectContent>
-                                                  </Select>
-                                                </FormControl>
-
-                                                <FormMessage />
-                                              </FormItem>
-                                            )}
-                                          />
-
-                                          <Button
-                                            type="submit"
-                                            onClick={() => {
-                                              if (
-                                                form.formState
-                                                  .isSubmitSuccessful
-                                              ) {
-                                                form.resetField("size");
-                                                form.resetField("color");
-                                              }
-                                            }}
-                                          >
-                                            Adicionar ao carrinho
-                                          </Button>
-                                        </form>
-                                      </Form>
-
-                                      <div className="flex "></div>
-                                      <div></div>
-                                    </div>
-                                  </div>
-                                  <div className="h-1/2 w-full">
-                                    <Image
-                                      src={item.image[0]}
-                                      alt="image"
-                                      height={2000}
-                                      width={2000}
-                                      className="object-contain"
-                                    />
-                                  </div>
-                                </div>
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      ) : null}
-                    </div>
-                    <div className="my-2">
-                      <p className="font-semibold text-xs ">{item.category}</p>
-                      <h2 className=" text-xs   cursor-pointer  line-clamp-1 my-2">
-                        {item.title}
-                      </h2>
-
-                      <p className="  line-clamp-1 cursor-pointer font-bold">
-                        {format.format(item.price)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        
+        <ProductsList />
       </div>
     </div>
   );
