@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { product } from "@/types";
 export default function useGetProducts() {
+
   const [result, setResult] = useState<product[] | null>(null);
+
   React.useEffect(() => {
     async function fetchProductsList() {
       try {
@@ -16,6 +18,8 @@ export default function useGetProducts() {
     }
     fetchProductsList();
   }, []);
+
+
 
   return result;
 }

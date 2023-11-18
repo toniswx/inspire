@@ -394,9 +394,9 @@ export default function Navbar() {
           )}
           <NavigationMenuItem asChild>
             {domLoaded && (
-              <div>
+              <div >
                 {userData === undefined ? (
-                  <Dialog>
+                  <Dialog >
                     <DialogTrigger asChild>
                       <Button className=" mx-5">Login</Button>
                     </DialogTrigger>

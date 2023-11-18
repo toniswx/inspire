@@ -230,10 +230,21 @@ app.post("/users/login", jsonParser, async (req, res) => {
 });
 
 app.get("/products", jsonParser, async (req, res) => {
-  console.log("this is comming here")
+  console.log("this is comming here");
   const products = await productsDB.find();
 
   res.json(products);
+});
+app.get("/products/:id", jsonParser, async (req, res) => {
+  try {
+    const product = await productsDB.findOne({ _id: req.params.id });
+
+    if (product === null) {
+      res.json({ data: "no product found" });
+    } else {
+      res.json({ data: product });
+    }
+  } catch (err) {}
 });
 
 module.exports = app;

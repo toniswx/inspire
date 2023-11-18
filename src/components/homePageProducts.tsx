@@ -1,5 +1,13 @@
 "use client";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import React, { useEffect, useState } from "react";
 import { product } from "@/types";
@@ -7,7 +15,8 @@ import { useCartStore } from "../store/store";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
-import useGetProducts from "@/app/hooks/useGetProducts";
+import useGetProducts from "@/hooks/useGetProducts";
+import LoginForm from "./loginFormPage";
 import {
   Form,
   FormControl,
@@ -41,7 +50,11 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useUserData } from "@/store/userdata.store";
 import { useRouter } from "next/navigation";
+import Login from "@/app/login";
+
 function ProducsList() {
+  const [openLoginModal, setOpenModal] = useState<boolean>(false);
+
   const [curretIndex, setCurrentIndex] = useState(0);
   const [mouseIsActive, setMouseActive] = useState(false);
   const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<
@@ -62,6 +75,8 @@ function ProducsList() {
   const setGlobalLoadingStateForUserFetchingData = useUserData(
     (state) => state.switchLoadingState
   );
+  const userData = useUserData((state) => state.user);
+
   const cartItems = useCartStore((state) => state.cart);
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
@@ -126,6 +141,9 @@ function ProducsList() {
     setSelectedItem(null);
     setOpen(false);
   }
+  const handleOpenLoginModal = () => {
+    setOpenModal(true);
+  };
 
   return (
     <>
@@ -171,36 +189,71 @@ function ProducsList() {
                       className=" w-full h-full object-cover  transition-all"
                       unoptimized
                     />
-                    <Button
-                      onClick={() => {
-                        setCurrentPageIndexToOpenModal(_index);
-                        setOpen(true);
-                        setSelectedItem({
-                          name: item.title,
-                          image: item.image,
-                          price: item.price,
-                          id: item.id,
-                          quantity: 1,
-                          colors: item.colors,
-                          selectedColor: null,
-                          size: null,
-                          sizes: item.sizes,
-                        });
-                      }}
-                      onMouseEnter={() => {
-                        setChangeGlobalIndex(_index);
-                      }}
-                      onMouseLeave={() => {
-                        setChangeGlobalIndex(null);
-                      }}
-                      className={
-                        changeGlobalIndex === _index
-                          ? "absolute bottom-2 opacity-100 "
-                          : "opacity-0 absolute "
-                      }
-                    >
-                      Adicionar ao carrinho
-                    </Button>
+                    {userData === undefined ? (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            onMouseEnter={() => {
+                              setChangeGlobalIndex(_index);
+                            }}
+                            onMouseLeave={() => {
+                              setChangeGlobalIndex(null);
+                            }}
+                            className={
+                              changeGlobalIndex === _index
+                                ? "absolute bottom-2 opacity-100 "
+                                : "opacity-0 absolute "
+                            }
+                          >
+                            Adicionar ao carrinho
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle className=" text-lg ">
+                              Acesse sua conta
+                            </DialogTitle>
+                            <DialogDescription>
+                              Acesse sua com seu email e senha para poder
+                              finalizar suas comprinhas! 🎇🎉✨
+                            </DialogDescription>
+                            <Login />
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          setCurrentPageIndexToOpenModal(_index);
+                          setOpen(true);
+                          setSelectedItem({
+                            name: item.title,
+                            image: item.image,
+                            price: item.price,
+                            id: item.id,
+                            quantity: 1,
+                            colors: item.colors,
+                            selectedColor: null,
+                            size: null,
+                            sizes: item.sizes,
+                          });
+                        }}
+                        onMouseEnter={() => {
+                          setChangeGlobalIndex(_index);
+                        }}
+                        onMouseLeave={() => {
+                          setChangeGlobalIndex(null);
+                        }}
+                        className={
+                          changeGlobalIndex === _index
+                            ? "absolute bottom-2 opacity-100 "
+                            : "opacity-0 absolute "
+                        }
+                      >
+                        Adicionar ao carrinho
+                      </Button>
+                    )}
+
                     {PageIndexToOpenModal === _index ? (
                       <AlertDialog open={open} onOpenChange={setOpen}>
                         <AlertDialogContent>
@@ -337,9 +390,7 @@ function ProducsList() {
                   <div
                     className="my-2"
                     onClick={() => {
-                      router.push(
-                        `/product/item?id=${item.id}&color=${undefined}&size=${undefined}`
-                      );
+                      router.push(`home/product/${item._id}`);
                     }}
                   >
                     <p className="font-semibold text-xs ">{item.category}</p>

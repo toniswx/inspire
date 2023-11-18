@@ -4,13 +4,14 @@ export type product = {
   price: number;
   description: string;
   category: string;
-  image: string;
+  image: string[]
   sizes: string[];
   rating: {
     rate: number;
     count: number;
   };
   colors: string[];
+  _id?: string;
 };
 
 export type cartItem = {
