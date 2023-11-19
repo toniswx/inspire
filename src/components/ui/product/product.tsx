@@ -11,10 +11,19 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useCartStore } from "@/store/store";
 import { Button } from "../button";
-import { Plus, Minus } from "lucide-react";
+import {
+  Plus,
+  Minus,
+  ThumbsUp,
+  ThumbsDown,
+  StarIcon,
+  Star,
+  Sparkle,
+} from "lucide-react";
 import { product } from "@/types";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import ProducRate from "@/components/producRates";
 import {
   Form,
   FormControl,
@@ -44,7 +53,7 @@ function Product() {
   const cartItems = useCartStore((state) => state.cart);
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
-
+  const setNewCart = useCartStore((state) => state.setNewCart);
   const formSchema = z.object({
     color: z.string(),
     size: z.string(),
@@ -55,13 +64,37 @@ function Product() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!data) return;
+
     const newProduct = {
-      ...data,
+      colors: data.colors,
       size: values.size,
-      color: values.color,
+      selectedColor: values.color,
       quantity: quantity,
+      price: data.price,
+      id: data.id,
+      sizes: data.sizes,
+      name: data.title,
+      image: data.image[0],
     };
-    console.log(newProduct);
+
+    const checkIfItemExistsInCart = cartItems.find(
+      (item) => item.name === data.title
+    );
+
+    if (checkIfItemExistsInCart) {
+      const newCart = cartItems;
+
+      const index = newCart.findIndex((item) => item.name == newProduct.name);
+      // Make sure the index is found, than replace it
+      if (index > -1) {
+        newCart.splice(index, 1, newProduct);
+        console.log(newCart)
+      }
+
+    } else {
+      addItem(newProduct);
+    }
   }
 
   const handleSubtractQuantity = () => {
@@ -94,7 +127,7 @@ function Product() {
   }
   return (
     <>
-      <div className="w-full h-screen flex items-center justify-center ">
+      <div className="w-full flex items-center justify-center ">
         <div className="w-10/12 h-full flex items-center justify-between p-4 ">
           <div className="w-1/2 h-full p-2  ">
             <div className="h-4/5 flex items-center justify-center ">
@@ -216,7 +249,6 @@ function Product() {
                         <div className="flex">
                           <RadioGroup
                             className="w-full"
-                            defaultValue={undefined}
                             onValueChange={field.onChange}
                           >
                             <div className="flex items-center space-x-2">
@@ -224,7 +256,7 @@ function Product() {
                                 return (
                                   <div className="h-5 w-5 flex items-center justify-center px-5 py-5 relative ">
                                     <RadioGroupItem
-                                      className="  "
+                                      className=" "
                                       value={size}
                                       id={size}
                                     />
@@ -264,16 +296,7 @@ function Product() {
                   </div>
                 </div>
 
-                <Button
-                  className="w-full"
-                  type="submit"
-                  onClick={() => {
-                    if (form.formState.isSubmitSuccessful) {
-                      form.resetField("size");
-                      form.resetField("color");
-                    }
-                  }}
-                >
+                <Button className="w-full" type="submit" onClick={() => {}}>
                   Adicionar ao carrinho
                 </Button>
               </form>
@@ -286,3 +309,89 @@ function Product() {
 }
 
 export default Product;
+
+/*   <div className="w-full flex items-center justify-center">
+        <div className=" h-full  w-4/6 p-2 flex items-center justify-start flex-col ">
+          <h2 className="text-l w-full g font-bold text-muted-foreground  mb-2  p-2">
+            Avaliação de clientes
+          </h2>
+          <div className="w-full p-5 py-6 flex items-center justify-normal border my-2">
+            <h2 className="">Media de notas :</h2>
+
+            <div className=" ml-2  flex items-center justify-center">
+              <p>{data.rating.rate}</p>
+            </div>
+            <div>
+              <div className="mx-2 flex items-center justify-center">
+                {Array.from(new Array(data.rating.rate)).map((i) => {
+                  return (
+                    <>
+                      <Sparkle
+                        size={20}
+                        color="#f9d423"
+                        strokeWidth={0.5}
+                        fill="#f9d423"
+                      />
+                    </>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <p> de {data.rating.count} avaliações</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-5">
+            {Array.from(new Array(3)).map((i) => {
+              return (
+                <div className="w-full border p-5 ">
+                  <div className="flex">
+                    <p className="text-neutral-800 text-sm font-semibold ">
+                      Antônio de Pádua
+                    </p>
+
+                    <div className="mx-2">
+                      <Badge className="bg-green-500">
+                        <ThumbsUp size={14} />
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between  h-full ">
+                    <p className="text-sm my-2 ">
+                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                      Consequuntur, odio quidem modi dolores earum nihil aperiam
+                      consequatur. Vitae incidunt iusto ab quidem laborum
+                      voluptas odio animi explicabo cupiditate, voluptate dolor.
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+            {Array.from(new Array(10)).map((i) => {
+              return (
+                <div className="w-full border p-5 ">
+                  <div className="flex">
+                    <p className="text-neutral-800 text-sm font-semibold ">
+                      Antônio de Pádua
+                    </p>
+
+                    <div className="mx-2">
+                      <Badge className="bg-green-500">
+                        <ThumbsUp size={14} />
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between  h-full ">
+                    <p className="text-sm my-2 ">
+                      Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                      Consequuntur, odio quidem modi dolores earum nihil aperiam
+                      consequatur. Vi iusto ab quidem laborum voluptas odio
+                      animi explicabo cupiditate, voluptate dolor.
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div> */

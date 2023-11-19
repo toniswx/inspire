@@ -4,7 +4,7 @@ export type product = {
   price: number;
   description: string;
   category: string;
-  image: string[]
+  image: string[];
   sizes: string[];
   rating: {
     rate: number;
@@ -14,6 +14,11 @@ export type product = {
   _id?: string;
 };
 
+type rate = {
+  id: string;
+  user: string;
+  comment: string;
+};
 export type cartItem = {
   size: string | null;
   sizes: string[];

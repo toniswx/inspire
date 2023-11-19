@@ -8,6 +8,7 @@ import { useCartStore } from "../../store/store";
 import ProductsList from "@/components/homePageProducts";
 
 import { useUserData } from "@/store/userdata.store";
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const setUserData = useUserData((state) => state.setUserData);
   const setUserCart = useCartStore((state) => state.setNewCart);
@@ -16,6 +17,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
+
+    
+
     fetch("http://localhost:3030/users/login", {
       method: "POST",
       credentials: "include",

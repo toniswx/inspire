@@ -54,7 +54,6 @@ import Login from "@/app/login";
 
 function ProducsList() {
   const [openLoginModal, setOpenModal] = useState<boolean>(false);
-
   const [curretIndex, setCurrentIndex] = useState(0);
   const [mouseIsActive, setMouseActive] = useState(false);
   const [PageIndexToOpenModal, setCurrentPageIndexToOpenModal] = useState<
@@ -193,6 +192,7 @@ function ProducsList() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
+                          
                             onMouseEnter={() => {
                               setChangeGlobalIndex(_index);
                             }}
@@ -228,7 +228,7 @@ function ProducsList() {
                           setOpen(true);
                           setSelectedItem({
                             name: item.title,
-                            image: item.image,
+                            image: item.image[0],
                             price: item.price,
                             id: item.id,
                             quantity: 1,

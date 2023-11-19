@@ -127,7 +127,7 @@ export default function Navbar() {
   useEffect(() => {
     let total = 0;
     for (let K in cartItems) {
-      total = total + cartItems[K].price;
+      total = total + cartItems[K].price * cartItems[K].quantity;
     }
 
     setTotalValue(total);
@@ -167,6 +167,24 @@ export default function Navbar() {
     if (index > -1) {
       newCart.splice(index, 1, newItem);
       setNewCart(newCart);
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const data = await fetch("http://localhost:3030/checkout", {
+        method: "POST",
+        credentials: "include", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+          // Outros cabeçalhos necessários
+        },
+        body:JSON.stringify({cart:cartItems})
+      });
+      const resp = await data.json();
+      route.push(resp.url)
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -288,7 +306,10 @@ export default function Navbar() {
                               cartItems.map((item: cartItem) => {
                                 return (
                                   <>
-                                    <div className="h-36 w-full mt-8  flex justify-between  rounded-md ">
+                                    <div
+                                      key={item.id}
+                                      className="h-36 w-full mt-8  flex justify-between  rounded-md "
+                                    >
                                       <div className="flex flex-col justify-between w-10/12 pr-4">
                                         <div>
                                           <p className=" h-fit text-xs line-clamp-2">
@@ -366,8 +387,6 @@ export default function Navbar() {
                                           </Button>
                                         </div>
                                       </div>
-
-                                    
                                     </div>
                                   </>
                                 );
@@ -381,7 +400,12 @@ export default function Navbar() {
                         <Separator />
                         <div className="px-2 my-6">
                           <h2>Total : {format.format(totalValue)} </h2>
-                          <Button className="w-full my-4">
+                          <Button
+                            className="w-full my-4"
+                            onClick={() => {
+                              handleCheckout();
+                            }}
+                          >
                             Finalizar compra
                           </Button>
                         </div>
@@ -394,9 +418,9 @@ export default function Navbar() {
           )}
           <NavigationMenuItem asChild>
             {domLoaded && (
-              <div >
+              <div>
                 {userData === undefined ? (
-                  <Dialog >
+                  <Dialog>
                     <DialogTrigger asChild>
                       <Button className=" mx-5">Login</Button>
                     </DialogTrigger>
