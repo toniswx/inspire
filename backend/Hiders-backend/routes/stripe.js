@@ -43,7 +43,7 @@ app.post("/checkout", jsonParser, async (req, res) => {
 const webhook_secret = process.env.webhook_secret;
 
 app.post(
-  "/pxr",
+  "/purchasewebhook",
   bodyParser.raw({ type: "application/json" }),
   async (req, res) => {
     const payload = req.body;
@@ -59,7 +59,6 @@ app.post(
     }
 
     if (event.type === "checkout.session.completed") {
-      // Retrieve the session. If you require line items in the response, you may include them by expanding line_items.
       const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
         event.data.object.id,
         {
@@ -68,8 +67,9 @@ app.post(
       );
       console.log(sessionWithLineItems);
     }
-
-    console.log("Got payload: " + payload);
+    if (event.type === "payment_intent.payment_failed") {
+      console.log(event.data)
+    }
 
     res.status(200).end();
   }
