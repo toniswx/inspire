@@ -2,8 +2,10 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 function page() {
+  const route = useRouter();
   const params: {
     idp: string;
   } = useParams();
@@ -70,9 +72,16 @@ function page() {
             Você vai receber um recibo do pedido no seu email
           </p>
         </div>
-        <div className="w-full flex items-center justify-center space-y-9 my-3"> 
+        <div className="w-full flex items-center justify-center space-y-9 my-3">
           {" "}
-          <Button className="w-full bg-emerald-500" >Continuar comprando</Button>
+          <Button
+            className="w-full bg-emerald-500"
+            onClick={() => {
+              route.push("/home");
+            }}
+          >
+            Continuar comprando
+          </Button>
         </div>
       </div>
     </div>

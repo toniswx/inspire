@@ -12,19 +12,11 @@ import Login from "@/app/login";
 
 import { Button } from "./ui/button";
 
-function LoginForm(props: { titleButton: string }) {
+function LoginForm(props : {titleButton:string}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className={
-            changeGlobalIndex === _index
-              ? "absolute bottom-2 opacity-100 "
-              : "opacity-0 absolute "
-          }
-        >
-          {props.titleButton}
-        </Button>
+			  <Button className=" mx-5">{props.titleButton}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

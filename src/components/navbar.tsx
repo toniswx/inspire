@@ -120,9 +120,14 @@ export default function Navbar() {
     (state) => state.isLoading
   );
   const cartItems = useCartStore((state) => state.cart);
+  const cartState = useCartStore((state) => state.loading);
   const addItem = useCartStore((state) => state.addItemToCart);
   const deleteItemFromArray = useCartStore((state) => state.deleteItemFromCart);
   const setNewCart = useCartStore((state) => state.setNewCart);
+
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
 
   useEffect(() => {
     let total = 0;
@@ -131,12 +136,12 @@ export default function Navbar() {
     }
 
     setTotalValue(total);
-    setDomLoaded(true);
   }, [cartItems.length, addItem, deleteItemFromArray]);
 
   useEffect(() => {
     console.log("change");
     if (userData === undefined) return;
+    if (cartState === true) return;
     fetch("http://localhost:3030/update/usercart", {
       method: "PATCH", // *GET, POST, PUT, DELETE, etc.
       credentials: "include", // include, *same-origin, omit
@@ -157,19 +162,6 @@ export default function Navbar() {
     } else {
     }
   };
-
-  const setNewSize = (oldItem: cartItem, newSize: string) => {
-    const newCart = cartItems;
-
-    const newItem = { ...oldItem, size: newSize };
-    const index = newCart.findIndex((item) => item.name == oldItem.name);
-    // Make sure the index is found, than replace it
-    if (index > -1) {
-      newCart.splice(index, 1, newItem);
-      setNewCart(newCart);
-    }
-  };
-
   const handleCheckout = async () => {
     try {
       const data = await fetch("http://localhost:3030/checkout", {
@@ -179,10 +171,10 @@ export default function Navbar() {
           "Content-Type": "application/json",
           // Outros cabeçalhos necessários
         },
-        body:JSON.stringify({cart:cartItems})
+        body: JSON.stringify({ cart: cartItems }),
       });
       const resp = await data.json();
-      route.push(resp.url)
+      route.push(resp.url);
     } catch (err) {
       console.log(err);
     }

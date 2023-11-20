@@ -8,6 +8,7 @@ const sessionValidation = require("../models/session_model");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
+const { Console } = require("console");
 const jsonParser = bodyParser.json();
 
 app.use(cookieParser());
@@ -67,6 +68,8 @@ app.patch("/users", jsonParser, async (req, res) => {
 });
 
 app.patch("/update/usercart", jsonParser, async (req, res) => {
+  console.log("ITS HERE");
+
   try {
     const updatedUser = await USER_MODEL_DB.updateOne(
       { email: req.body.email },
@@ -230,7 +233,6 @@ app.post("/users/login", jsonParser, async (req, res) => {
 });
 
 app.get("/products", jsonParser, async (req, res) => {
-  console.log("this is comming here");
   const products = await productsDB.find();
 
   res.json(products);

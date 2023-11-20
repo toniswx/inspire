@@ -12,14 +12,12 @@ import { useUserData } from "@/store/userdata.store";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const setUserData = useUserData((state) => state.setUserData);
   const setUserCart = useCartStore((state) => state.setNewCart);
+  const handleCartState = useCartStore((state) => state.handleCartState);
   const setGlobalLoadingStateForUserFetchingData = useUserData(
     (state) => state.switchLoadingState
   );
 
   useEffect(() => {
-
-    
-
     fetch("http://localhost:3030/users/login", {
       method: "POST",
       credentials: "include",
@@ -33,9 +31,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (resp.sucess === true) {
           setUserData(resp.data);
           setUserCart(resp.data.cart);
+          handleCartState(false);
           setGlobalLoadingStateForUserFetchingData(false);
         } else if (resp.sucess === false) {
           setGlobalLoadingStateForUserFetchingData(false);
+          handleCartState(false);
           setUserCart([]);
           setUserData(undefined);
         }
@@ -45,6 +45,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }
       });
   }, []);
+
   return (
     <>
       <Navbar />

@@ -112,7 +112,7 @@ function ProducsList() {
       selectedColor: values.color,
       size: values.size,
     };
-
+    form.reset();
     const findIfItemIsAlreadInCart = cartItems.find((item) => {
       return item.name === selectedItem.name;
     });
@@ -135,14 +135,12 @@ function ProducsList() {
         title: "Item adicionado ao seu cart",
         description: "Friday, February 10, 2023 at 5:57 PM",
       });
+      console.log(cartItems);
     }
 
     setSelectedItem(null);
     setOpen(false);
   }
-  const handleOpenLoginModal = () => {
-    setOpenModal(true);
-  };
 
   return (
     <>
@@ -192,7 +190,6 @@ function ProducsList() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                          
                             onMouseEnter={() => {
                               setChangeGlobalIndex(_index);
                             }}
@@ -353,14 +350,7 @@ function ProducsList() {
 
                                         <Button
                                           type="submit"
-                                          onClick={() => {
-                                            if (
-                                              form.formState.isSubmitSuccessful
-                                            ) {
-                                              form.resetField("size");
-                                              form.resetField("color");
-                                            }
-                                          }}
+                                          onClick={() => {}}
                                         >
                                           Adicionar ao carrinho
                                         </Button>

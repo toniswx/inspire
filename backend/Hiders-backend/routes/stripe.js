@@ -12,6 +12,8 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const domain = "http://localhost:3000/purchase/sucess/";
 
+
+
 app.post("/checkout", jsonParser, async (req, res) => {
   const PRODUCTS_FROM_CLIENT = req.body.cart;
 
@@ -68,7 +70,7 @@ app.post(
       console.log(sessionWithLineItems);
     }
     if (event.type === "payment_intent.payment_failed") {
-      console.log(event.data)
+      
     }
 
     res.status(200).end();

@@ -11,26 +11,16 @@ interface User {
   switchLoadingState: (isLoading: boolean) => void;
 }
 
-export const useUserData = create<User>()(
-  devtools(
-    persist(
-      (set) => ({
-        user: undefined,
-        isLoading: false,
-        openModaltoLogin:false,
-        switchLoadingState: (by) => set((state) => ({ isLoading: by })),
-        setUserData: (by) => {
-          if (by === undefined) {
-            set((state) => ({ user: undefined }));
-          } else {
-            set((state) => ({ user: { name: by.name, email: by.email } }));
-          }
-        },
-      }), // Move the closing parenthesis here
-      {
-        name: "user-quick-data", // name of the item in the storage (must be unique)
-        storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
-      }
-    )
-  )
-);
+export const useUserData = create<User>()((set) => ({
+  user: undefined,
+  isLoading: false,
+  openModaltoLogin: false,
+  switchLoadingState: (by) => set((state) => ({ isLoading: by })),
+  setUserData: (by) => {
+    if (by === undefined) {
+      set((state) => ({ user: undefined }));
+    } else {
+      set((state) => ({ user: { name: by.name, email: by.email } }));
+    }
+  },
+}));
