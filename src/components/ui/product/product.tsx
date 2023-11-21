@@ -76,6 +76,7 @@ function Product() {
       id: data.id,
       sizes: data.sizes,
       name: data.title,
+      _id:data._id,
       image: data.image[0],
     };
 
@@ -90,7 +91,7 @@ function Product() {
       // Make sure the index is found, than replace it
       if (index > -1) {
         newCart.splice(index, 1, newProduct);
-        console.log(newCart)
+        setNewCart(newCart)
       }
 
     } else {
