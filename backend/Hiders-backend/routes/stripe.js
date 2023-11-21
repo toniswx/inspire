@@ -12,8 +12,6 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const domain = "http://localhost:3000/purchase/sucess/";
 
-
-
 app.post("/checkout", jsonParser, async (req, res) => {
   const PRODUCTS_FROM_CLIENT = req.body.cart;
 
@@ -35,6 +33,19 @@ app.post("/checkout", jsonParser, async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: client_data_products_formated,
     mode: "payment",
+
+    shipping_address_collection: {
+      allowed_countries: ["BR"],
+    },
+    custom_text: {
+      shipping_address: {
+        message:
+          "Please note that we can't guarantee 2-day delivery for PO boxes at this time.",
+      },
+      submit: {
+        message: "We'll email you instructions on how to get started.",
+      },
+    },
     success_url: `${domain + purchase_id}?success=true`,
     cancel_url: `${domain + purchase_id}?canceled=true`,
   });
@@ -61,16 +72,17 @@ app.post(
     }
 
     if (event.type === "checkout.session.completed") {
-      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-        event.data.object.id,
-        {
-          expand: ["line_items"],
-        }
-      );
-      console.log(sessionWithLineItems);
+      //add invoice to user
+      const invoice = {
+        id: event.id,
+        date: Date.UTC(),
+      };
+      console.log(event);
+
+      // create order into dashboard
     }
     if (event.type === "payment_intent.payment_failed") {
-      
+      //return to user
     }
 
     res.status(200).end();
