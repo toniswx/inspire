@@ -20,6 +20,7 @@ type rate = {
   comment: string;
 };
 export type cartItem = {
+  _id?: string;
   size: string | null;
   sizes: string[];
   selectedColor: string | null;

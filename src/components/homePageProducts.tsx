@@ -107,6 +107,7 @@ function ProducsList() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (selectedItem === null) return;
 
+    console.log(selectedItem);
     const newItem = {
       ...selectedItem,
       selectedColor: values.color,
@@ -233,6 +234,7 @@ function ProducsList() {
                             selectedColor: null,
                             size: null,
                             sizes: item.sizes,
+                            _id: item._id,
                           });
                         }}
                         onMouseEnter={() => {

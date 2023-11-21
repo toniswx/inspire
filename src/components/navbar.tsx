@@ -163,7 +163,7 @@ export default function Navbar() {
     }
   };
   const handleCheckout = async () => {
-    try {
+    /*try {
       const data = await fetch("http://localhost:3030/checkout", {
         method: "POST",
         credentials: "include", // include, *same-origin, omit
@@ -177,7 +177,9 @@ export default function Navbar() {
       route.push(resp.url);
     } catch (err) {
       console.log(err);
-    }
+    } */
+
+    route.push("/home/pre-checkout-page")
   };
 
   return (
