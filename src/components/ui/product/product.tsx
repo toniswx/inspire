@@ -35,6 +35,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import item from "@/components/cart-items/item";
 
 function Product() {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -148,7 +149,6 @@ function Product() {
                       />
                     );
                   })}
-                  
                 </ScrollArea>
               </div>
               <div className="w-full h-full flex items-center justify-center">
@@ -277,7 +277,14 @@ function Product() {
                     </div>
                   </div>
                 </div>
-
+                <div>
+                  <h2 className="font-semibold">Produtos disponíveis</h2>
+                  <p className="text-sm">{data.quantity_available}</p>
+                </div>
+                <div>
+                  <h2 className="font-semibold">Compras realizadas</h2>
+                  <p className="text-sm">{data.buys}</p>
+                </div>
                 <Button className="w-full" type="submit" onClick={() => {}}>
                   Adicionar ao carrinho
                 </Button>

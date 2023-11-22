@@ -28,8 +28,12 @@ const productSchema = new mongoose.Schema({
   rating: {
     type: Object,
   },
+  quantity_available: {
+    type: Number,
+  },
+  buys: {
+    type:Number
+  }
 });
 
-
-
-module.exports = mongoose.model('products',productSchema)
+module.exports = mongoose.model("products", productSchema);

@@ -8,6 +8,8 @@ const stripe = require("stripe")(stripeURL);
 const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
 const userModel = require("../models/user_model");
+const products_model = require("../models/products_model");
+
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const domain = "http://localhost:3000/purchase/sucess/";
@@ -92,6 +94,7 @@ app.post(
       console.log(lineItems.data);
 
       const customerId = event.data.object.customer;
+
       //add invoice to user
       const newInvoice = {
         id: event.id,
@@ -111,7 +114,21 @@ app.post(
         { invoices: [...currentUser.invoices, newInvoice], cart: [] }
       );
 
-      // create order into dashboard
+      //update products documents
+
+      const updateProducstdb = lineItems.data.forEach(async (element) => {
+        const currentItem = await products_model.findOne({
+          title: element.description,
+        });
+        const updateCurrentItem = await products_model.findOneAndUpdate(
+          { title: currentItem.title },
+          {
+            quantity_available:
+              currentItem.quantity_available - element.quantity,
+            buys: currentItem.buys + 1,
+          }
+        );
+      });
     }
     if (event.type === "payment_intent.payment_failed") {
       //return to user

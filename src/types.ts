@@ -6,6 +6,8 @@ export type product = {
   category: string;
   image: string[];
   sizes: string[];
+  buys: number;
+  quantity_available: number;
   rating: {
     rate: number;
     count: number;
