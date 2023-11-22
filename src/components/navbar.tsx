@@ -179,7 +179,7 @@ export default function Navbar() {
       console.log(err);
     } */
 
-    route.push("/home/pre-checkout-page")
+    route.push("/home/pre-checkout-page");
   };
 
   return (
@@ -442,22 +442,12 @@ export default function Navbar() {
                       <DropdownMenuGroup>
                         <DropdownMenuItem
                           onClick={() => {
-                            route.push("/userProfile");
+                            route.push("/home/profile");
                           }}
                         >
                           <User className="mr-2 h-4 w-4" />
                           <span>Perfil</span>
                           <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <CreditCard className="mr-2 h-4 w-4" />
-                          <span>Compras</span>
-                          <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Settings className="mr-2 h-4 w-4" />
-                          <span>Configurações</span>
-                          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />

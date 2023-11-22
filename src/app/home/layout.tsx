@@ -29,6 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       .then((data) => data.json())
       .then((resp) => {
         if (resp.sucess === true) {
+          console.log(resp.data)
           setUserData(resp.data);
           setUserCart(resp.data.cart);
           handleCartState(false);

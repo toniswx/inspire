@@ -10,7 +10,8 @@ const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const { Console } = require("console");
 const jsonParser = bodyParser.json();
-
+const stripeURL = process.env.STRIPE_PUBLIC_KEY;
+const stripe = require("stripe")(stripeURL);
 app.use(cookieParser());
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
@@ -117,11 +118,14 @@ app.post("/users", jsonParser, async (req, res) => {
       },
     });
   } else {
+    const stripeCustomer = await stripe.customers.create();
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
     const newUser = new USER_MODEL_DB({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
+      stripe_id: stripeCustomer.id,
     });
 
     const newSession = new sessionValidation({
@@ -172,11 +176,7 @@ app.post("/users/login", jsonParser, async (req, res) => {
         })
         .json({
           sucess: true,
-          data: {
-            name: userDataFromDb.name,
-            email: userDataFromDb.email,
-            cart: userDataFromDb.cart,
-          },
+          data: userDataFromDb,
         });
     }
   } else if (req.body.email !== null && req.body.password !== null) {
@@ -215,10 +215,7 @@ app.post("/users/login", jsonParser, async (req, res) => {
             })
             .json({
               sucess: response,
-              data: {
-                name: userDataFromDb.name,
-                email: userDataFromDb.email,
-              },
+              data: userDataFromDb,
             });
         } else {
           // response is OutgoingMessage object that server response http request

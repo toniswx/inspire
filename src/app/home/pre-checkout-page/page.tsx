@@ -23,7 +23,7 @@ function page() {
   const total = useCartStore((state) => state.total);
   const cartItem = useCartStore((state) => state.cart);
   const route = useRouter();
-
+  const user = useUserData((state) => state.user);
   const handleCheckout = async () => {
     try {
       const data = await fetch("http://localhost:3030/checkout", {
@@ -33,7 +33,7 @@ function page() {
           "Content-Type": "application/json",
           // Outros cabeçalhos necessários
         },
-        body: JSON.stringify({ cart: cartItem }),
+        body: JSON.stringify({ cart: cartItem, user: user!.email }),
       });
       const resp = await data.json();
       route.push(resp.url);

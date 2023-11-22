@@ -7,15 +7,23 @@ const stripeURL = process.env.STRIPE_PUBLIC_KEY;
 const stripe = require("stripe")(stripeURL);
 const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
-
+const userModel = require("../models/user_model");
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 const domain = "http://localhost:3000/purchase/sucess/";
 
+const currentDate = new Date();
+const formattedDate = currentDate.toLocaleDateString();
+
 app.post("/checkout", jsonParser, async (req, res) => {
   const PRODUCTS_FROM_CLIENT = req.body.cart;
+  const USERID = req.body.user;
 
   const purchase_id = uuidv4();
+
+  const user = await userModel.findOne({ email: USERID }); // Adjust based on your identifier
+
+  if (!user) return;
 
   const client_data_products_formated = PRODUCTS_FROM_CLIENT.map((i) => {
     return {
@@ -46,6 +54,7 @@ app.post("/checkout", jsonParser, async (req, res) => {
         message: "We'll email you instructions on how to get started.",
       },
     },
+    customer: user.stripe_id,
     success_url: `${domain + purchase_id}?success=true`,
     cancel_url: `${domain + purchase_id}?canceled=true`,
   });
@@ -72,12 +81,35 @@ app.post(
     }
 
     if (event.type === "checkout.session.completed") {
+      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
+        event.data.object.id,
+        {
+          expand: ["line_items"],
+        }
+      );
+      const lineItems = sessionWithLineItems.line_items;
+
+      console.log(lineItems.data);
+
+      const customerId = event.data.object.customer;
       //add invoice to user
-      const invoice = {
+      const newInvoice = {
         id: event.id,
-        date: Date.UTC(),
+        date: formattedDate,
+        total: event.data.object.amount_total,
+        adress: { ...event.data.object.shipping_details },
+        status: event.data.object.status,
+        items: lineItems.data,
       };
-      console.log(event);
+
+      const currentUser = await userModel.findOne({ stripe_id: customerId });
+
+      const addInvoiceToUserDB = await userModel.findOneAndUpdate(
+        {
+          email: currentUser.email,
+        },
+        { invoices: [...currentUser.invoices, newInvoice], cart: [] }
+      );
 
       // create order into dashboard
     }

@@ -26,6 +26,10 @@ const userModel = new mongoose.Schema({
   adresses: {
     type: Object,
   },
+  stripe_id: {
+    type: String,
+    require: true,
+  },
 });
 
 module.exports = mongoose.model("user", userModel);

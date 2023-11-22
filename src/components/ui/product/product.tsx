@@ -20,6 +20,7 @@ import {
   Star,
   Sparkle,
 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { product } from "@/types";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -36,7 +37,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 function Product() {
-  
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
 
@@ -76,7 +76,7 @@ function Product() {
       id: data.id,
       sizes: data.sizes,
       name: data.title,
-      _id:data._id,
+      _id: data._id,
       image: data.image[0],
     };
 
@@ -91,9 +91,8 @@ function Product() {
       // Make sure the index is found, than replace it
       if (index > -1) {
         newCart.splice(index, 1, newProduct);
-        setNewCart(newCart)
+        setNewCart(newCart);
       }
-
     } else {
       addItem(newProduct);
     }
@@ -129,73 +128,54 @@ function Product() {
   }
   return (
     <>
-      <div className="w-full flex items-center justify-center ">
-        <div className="w-10/12 h-full flex items-center justify-between p-4 ">
-          <div className="w-1/2 h-full p-2  ">
-            <div className="h-4/5 flex items-center justify-center ">
-              <div>
-                <Button
-                  onClick={() => {
-                    handleIndex("left");
-                  }}
-                >
-                  <ArrowLeft size={16} strokeWidth={2} />
-                </Button>
-              </div>
-              <div className="flex items-center justify-center flex-col">
-                <Image
-                  src={data.image[currentImageIndex]}
-                  alt="product image"
-                  className=" w-10/12 h-full mx-4 object-contain"
-                  width={1900}
-                  height={1900}
-                />
-                <div className="flex items-center justify-center ">
-                  {data.image.map((item, index) => {
+      <div className="w-full flex items-center justify-center  h-full  ">
+        <div className="w-full h-full flex items-start justify-around  ">
+          <div className="w-2/3 h-full flex items-center justify-center ">
+            <div className="w-10/12 h-5/6  flex items-start justify-center ">
+              <div className="h-full ">
+                <ScrollArea className="h-full w-[160px] ">
+                  {data.image.map((i, index) => {
                     return (
-                      <>
-                        {index === currentImageIndex ? (
-                          <div
-                            className="w-5 h-5 m-2 rounded-full bg-neutral-900 cursor-pointer"
-                            onClick={() => {
-                              setCurrentImageIndex(index);
-                            }}
-                          ></div>
-                        ) : (
-                          <div
-                            className="w-5 h-5 m-2 rounded-full bg-slate-200 cursor-pointer"
-                            onClick={() => {
-                              setCurrentImageIndex(index);
-                            }}
-                          ></div>
-                        )}
-                      </>
+                      <Image
+                        onClick={() => {
+                          setCurrentImageIndex(index);
+                        }}
+                        src={i}
+                        alt={i}
+                        width={10000}
+                        height={10000}
+                        className="w-full h-full object-contain my-1 cursor-pointer"
+                      />
                     );
                   })}
-                </div>
+                  
+                </ScrollArea>
               </div>
-
-              <Button
-                onClick={() => {
-                  handleIndex("right");
-                }}
-              >
-                <ArrowRight size={16} strokeWidth={2} />
-              </Button>
+              <div className="w-full h-full flex items-center justify-center">
+                <Image
+                  src={data.image[currentImageIndex]}
+                  alt={data.title}
+                  width={10000}
+                  height={10000}
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
           </div>
-          <div className="w-1/3 h-full p-2 mt-50  ">
+          <div className="w-1/3  shadow-lg p-20  h-full  ">
+            <Badge className="bg-green-400 my-2 ">Novo</Badge>
+
             <h2 className="text-2xl mb-2 font-semibold space-x-3">
               {data.title}
             </h2>
             <p className="text-xs font-thin">#{data._id}</p>
             <p className="text-xs">{data.description}</p>
-            <div className="flex items-center ">
+
+            <div className="flex items-start flex-col ">
               {" "}
-              <p className="text-2xl my-2 font-bold mr-3">
+              <p className="text-2xl my-1 font-bold mr-3">
                 {format.format(data.price)}
               </p>
-              <Badge className="bg-green-400 ">Novo</Badge>
             </div>
             <Separator className="my-4 " />
             <Form {...form} key={data._id}>
