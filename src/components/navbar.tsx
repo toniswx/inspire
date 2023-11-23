@@ -57,19 +57,11 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useCartStore } from "../store/store";
 import Login from "@/app/login";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { userDataType } from "@/store/userdata.store";
+
 import { cartItem } from "@/types";
 import {
   Sheet,
@@ -80,7 +72,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Suspense } from "react";
-import { LogIn } from "lucide-react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -183,7 +174,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full flex justify-around items-center h-20  border-b shadow-sm ">
+    <div className="w-full  flex justify-around items-center h-32 border-b pb-3 flex-col  md:flex-row shadow-sm ">
       <svg
         width="190"
         height="180"
@@ -233,7 +224,7 @@ export default function Navbar() {
         />
       </svg>
 
-      <NavigationMenu>
+      <NavigationMenu >
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="border">
@@ -257,11 +248,12 @@ export default function Navbar() {
             ""
           ) : (
             <NavigationMenuItem>
-              <Sheet>
+              <Sheet  >
                 <SheetTrigger asChild>
-                  <Button
+                    <Button
+                    
                     variant={"outline"}
-                    className="px-6"
+                    className="px-6 "
                     disabled={domLoaded ? false : true}
                   >
                     {domLoaded && <ShoppingCart className="mr-2 h-4 w-4" />}{" "}
@@ -295,7 +287,7 @@ export default function Navbar() {
                     <Suspense fallback={<p>Loading..</p>}>
                       <div className="flex flex-col  h-full">
                         <ScrollArea className=" h-5/6 px-3">
-                          <div className=" ">
+                          <div className="">
                             {domLoaded ? (
                               cartItems.map((item: cartItem) => {
                                 return (
@@ -412,7 +404,7 @@ export default function Navbar() {
           )}
           <NavigationMenuItem asChild>
             {domLoaded && (
-              <div>
+              <div className="">
                 {userData === undefined ? (
                   <Dialog>
                     <DialogTrigger asChild>

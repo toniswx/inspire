@@ -23,9 +23,35 @@ app.post("/checkout", jsonParser, async (req, res) => {
 
   const purchase_id = uuidv4();
 
-  const user = await userModel.findOne({ email: USERID }); // Adjust based on your identifier
+  const user = await userModel.findOne({ email: USERID });
 
   if (!user) return;
+
+  console.log(PRODUCTS_FROM_CLIENT);
+
+  //checkStore will return a array with ["true"] or ["false"]
+
+  const checkStore = await Promise.all(
+    PRODUCTS_FROM_CLIENT.map(async (item) => {
+      let data = false;
+
+      const checkIfItemHasEnoughQuantity = await products_model.findOne({
+        title: item.name,
+      });
+
+      if (checkIfItemHasEnoughQuantity.quantity_available < item.quantity) {
+        data = true;
+      }
+
+      return data;
+    })
+  );
+
+ 
+
+
+  if (checkStore.includes(true)) return;
+
 
   const client_data_products_formated = PRODUCTS_FROM_CLIENT.map((i) => {
     return {
@@ -116,19 +142,21 @@ app.post(
 
       //update products documents
 
-      const updateProducstdb = lineItems.data.forEach(async (element) => {
-        const currentItem = await products_model.findOne({
-          title: element.description,
-        });
-        const updateCurrentItem = await products_model.findOneAndUpdate(
-          { title: currentItem.title },
-          {
-            quantity_available:
-              currentItem.quantity_available - element.quantity,
-            buys: currentItem.buys + 1,
-          }
-        );
-      });
+      const updateProducstdb = Promise.all(
+        lineItems.data.forEach(async (element) => {
+          const currentItem = await products_model.findOne({
+            title: element.description,
+          });
+          const updateCurrentItem = await products_model.findOneAndUpdate(
+            { title: currentItem.title },
+            {
+              quantity_available:
+                currentItem.quantity_available - element.quantity,
+              buys: currentItem.buys + element.quantity,
+            }
+          );
+        })
+      );
     }
     if (event.type === "payment_intent.payment_failed") {
       //return to user

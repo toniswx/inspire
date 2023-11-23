@@ -43,26 +43,26 @@ function page() {
   };
 
   return (
-    <div className="flex items-start justify-around w-full   p-10 ">
+    <div className="flex items-start justify-around w-full flex-col lg:flex-row  p-4 ">
       <div
         className=" mx-2  flex items-center justify-normal 
 	  "
       >
         <Items />
       </div>
-      <div className="w-1/3 h-full flex items-center justify-normal  flex-col">
+      <div className="w-full lg:w-1/3 h-full flex items-center justify-normal  flex-col">
         <div className="w-full grid grid-cols-3 my-5 "></div>
         <div className="w-full p-10 bg-neutral-900 text-white ">
           <h2 className="text-3xl font-bold">Resumo</h2>
-          <div className="flex items-center justify-between ">
+          <div className="flex items-center justify-between my-4 ">
             <p className="text-xs">Subtotal :</p>
             <p className="text-xs">{format.format(total)}</p>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between  my-4">
             <p className="text-xs">Descontos :</p>
-            <p className="text-xs">Nenhum cupom pra essa compra</p>
+            <p className="text-xs">--</p>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between  my-4">
             <p className="text-xs">Valor estimado do frete :</p>
             <p className="text-xs">--</p>
           </div>

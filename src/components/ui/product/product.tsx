@@ -100,10 +100,17 @@ function Product() {
   }
 
   const handleSubtractQuantity = () => {
+    if (!data) return;
+
     if (quantity === 1) return;
     setQuantity((oldValue) => oldValue - 1);
   };
   const handleIncreaseQuantity = () => {
+    if (!data) return;
+
+    if (data.quantity_available - quantity === 0) {
+      return;
+    }
     setQuantity((oldValue) => oldValue + 1);
   };
 
@@ -129,12 +136,48 @@ function Product() {
   }
   return (
     <>
-      <div className="w-full flex items-center justify-center  h-full  ">
-        <div className="w-full h-full flex items-start justify-around  ">
-          <div className="w-2/3 h-full flex items-center justify-center ">
-            <div className="w-10/12 h-5/6  flex items-start justify-center ">
+      <div className="w-full flex items-center justify-center lg:h-screen ">
+        <div className="w-full h-full flex  flex-col-reverse md:flex-row shadow-lg ">
+          <div className=" w-full md:w-2/3 h-full flex items-center justify-center  ">
+            <div className="w-10/12  hidden md:flex   items-start justify-center ">
               <div className="h-full ">
-                <ScrollArea className="h-full w-[160px] ">
+                <ScrollArea className="h-full w-full p-2 mt-2 md:w-[160px] ">
+                  {data.image.map((i, index) => {
+                    return (
+                      <Image
+                        onClick={() => {
+                          setCurrentImageIndex(index);
+                        }}
+                        src={i}
+                        alt={i}
+                        width={10000}
+                        height={1000}
+                        className="w-full h-full object-contain my-1 cursor-pointer"
+                      />
+                    );
+                  })}
+                </ScrollArea>
+              </div>
+              <div className="w-full p-2 mt-3  items-center justify-center hidden md:flex">
+                <Image
+                  src={data.image[currentImageIndex]}
+                  alt={data.title}
+                  width={10000}
+                  height={10000}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="w-full h-full md:w-1/2  shadow-lg   p-10 lg:p-20   ">
+            <Badge className="bg-green-400 my-2 ">Novo</Badge>
+
+            <h2 className="text-2xl mb-2 font-semibold space-x-3">
+              {data.title}
+            </h2>
+            <div className="w-10/12  md:hidden  items-start justify-center  ">
+              <div className="h-full ">
+                <ScrollArea className="h-full w-full p-2 mt-2 md:w-[160px] ">
                   {data.image.map((i, index) => {
                     return (
                       <Image
@@ -151,7 +194,7 @@ function Product() {
                   })}
                 </ScrollArea>
               </div>
-              <div className="w-full h-full flex items-center justify-center">
+              <div className="w-full h-full  items-center justify-center hidden md:flex">
                 <Image
                   src={data.image[currentImageIndex]}
                   alt={data.title}
@@ -161,13 +204,6 @@ function Product() {
                 />
               </div>
             </div>
-          </div>
-          <div className="w-1/3  shadow-lg p-20  h-full  ">
-            <Badge className="bg-green-400 my-2 ">Novo</Badge>
-
-            <h2 className="text-2xl mb-2 font-semibold space-x-3">
-              {data.title}
-            </h2>
             <p className="text-xs font-thin">#{data._id}</p>
             <p className="text-xs">{data.description}</p>
 
@@ -279,13 +315,26 @@ function Product() {
                 </div>
                 <div>
                   <h2 className="font-semibold">Produtos disponíveis</h2>
-                  <p className="text-sm">{data.quantity_available}</p>
+                  <p
+                    className={
+                      data?.quantity_available === 0
+                        ? "text-red-400"
+                        : "text-sm"
+                    }
+                  >
+                    {data.quantity_available}
+                  </p>
                 </div>
                 <div>
                   <h2 className="font-semibold">Compras realizadas</h2>
                   <p className="text-sm">{data.buys}</p>
                 </div>
-                <Button className="w-full" type="submit" onClick={() => {}}>
+                <Button
+                  className="w-full"
+                  type="submit"
+                  onClick={() => {}}
+                  disabled={data.quantity_available < 1 ? true : false}
+                >
                   Adicionar ao carrinho
                 </Button>
               </form>

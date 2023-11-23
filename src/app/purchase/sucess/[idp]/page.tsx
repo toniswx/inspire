@@ -65,7 +65,7 @@ function page() {
         </div>
         <h2 className="my-4 font-bold">Obrigado pela sua compra!</h2>
         <p className="text-muted-foreground text-sm">
-          Seu número de pedido é : #{params.idp}{" "}
+          Seu pedido foi completo!
         </p>
         <div>
           <p className="text-muted-foreground text-sm">

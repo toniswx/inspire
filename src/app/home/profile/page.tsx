@@ -74,8 +74,8 @@ function page() {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-screen px-10">
-      <div className="w-9/12 h-5/6 border p-10 ">
+    <div className="flex items-center justify-center w-full h-screen p-6">
+      <div className="w-full h-5/6 border p-3 lg:w-7/12 ">
         <h2 className="text-lg font-semibold">
           Bem vindo de volta {user?.name}
         </h2>
@@ -91,7 +91,7 @@ function page() {
                   <Form {...form}>
                     <form
                       onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-8 w-9/12"
+                      className="space-y-8 w-full p-2"
                     >
                       <FormField
                         control={form.control}
@@ -137,7 +137,7 @@ function page() {
                 </div>{" "}
               </TabsContent>
               <TabsContent value="password">
-                <Table>
+                <Table className="p-3">
                   <TableCaption>
                     Uma lista das suas compras recentes.
                   </TableCaption>
