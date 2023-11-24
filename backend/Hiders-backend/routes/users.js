@@ -33,7 +33,7 @@ app.get("/users", jsonParser, async (req, res) => {
   });
 
   if (validateSession === null) {
-    res.json({
+    res.status(400).json({
       sucess: false,
     });
   } else if (cookie !== undefined) {
@@ -46,7 +46,7 @@ app.get("/users", jsonParser, async (req, res) => {
       }
     }
   } else {
-    res.json({ data: null });
+    res.status(200).json({ data: null });
   }
 });
 
@@ -245,5 +245,9 @@ app.get("/products/:id", jsonParser, async (req, res) => {
     }
   } catch (err) {}
 });
+
+app.get("/testRoute", (req, res) => {
+ res.status(400)
+})
 
 module.exports = app;
