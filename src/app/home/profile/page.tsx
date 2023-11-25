@@ -41,6 +41,7 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   email: z.string().email(),
+  
 });
 
 function page() {

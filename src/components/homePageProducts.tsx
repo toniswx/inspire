@@ -106,14 +106,14 @@ function ProducsList() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (selectedItem === null) return;
+    if(selectedItem.quantity < 1) return
 
-    console.log(selectedItem);
     const newItem = {
       ...selectedItem,
       selectedColor: values.color,
       size: values.size,
     };
-    form.reset();
+   
     const findIfItemIsAlreadInCart = cartItems.find((item) => {
       return item.name === selectedItem.name;
     });
@@ -353,13 +353,17 @@ function ProducsList() {
                                         <Button
                                           type="submit"
                                           onClick={() => {}}
+                                          disabled={item.quantity_available < 1 ? true : false}
+
                                         >
                                           Adicionar ao carrinho
                                         </Button>
                                       </form>
                                     </Form>
 
-                                    <div className="flex "></div>
+                                    <div className="flex ">
+                                      <h2 className="py-2">{item.quantity_available < 1 ? "O produto esta sem estoque no momento." : false}</h2>
+                                    </div>
                                     <div></div>
                                   </div>
                                 </div>

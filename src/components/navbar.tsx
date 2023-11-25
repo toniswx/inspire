@@ -74,26 +74,22 @@ import {
 import { Suspense } from "react";
 
 const components: { title: string; href: string; description: string }[] = [
+  
   {
-    title: "Bodys",
+    title: "Home",
+    href: "/",
+    description: "",
+  },
+  {
+    title: "Feminino",
     href: "",
     description: "",
   },
   {
-    title: "Academia",
+    title: "Masculino",
     href: "",
     description: "",
-  },
-  {
-    title: "Leggins",
-    href: "",
-    description: "",
-  },
-  {
-    title: "Parte de cima",
-    href: "",
-    description: "",
-  },
+  }
 ];
 
 export default function Navbar() {
@@ -174,10 +170,10 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full  flex justify-around items-center h-32 border-b pb-3 flex-col  md:flex-row shadow-sm ">
+    <div className="w-full  flex justify-around items-center  border-b pb-3 flex-col  md:flex-row shadow-sm ">
       <svg
         width="190"
-        height="180"
+        height="70"
         viewBox="0 0 453 180"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +220,7 @@ export default function Navbar() {
         />
       </svg>
 
-      <NavigationMenu >
+      <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="border">
@@ -248,10 +244,9 @@ export default function Navbar() {
             ""
           ) : (
             <NavigationMenuItem>
-              <Sheet  >
+              <Sheet >
                 <SheetTrigger asChild>
-                    <Button
-                    
+                  <Button
                     variant={"outline"}
                     className="px-6 "
                     disabled={domLoaded ? false : true}
@@ -294,7 +289,7 @@ export default function Navbar() {
                                   <>
                                     <div
                                       key={item.id}
-                                      className="h-36 w-full mt-8  flex justify-between  rounded-md "
+                                      className="h-36 w-full mt-8  flex justify-between  rounded-md border p-2 "
                                     >
                                       <div className="flex flex-col justify-between w-10/12 pr-4">
                                         <div>
@@ -372,6 +367,16 @@ export default function Navbar() {
                                             </svg>
                                           </Button>
                                         </div>
+                                      </div>
+                                      <div className="  flex items-center justify-center  ">
+                                        <Image
+                                          src={item.image}
+                                          alt={item.name}
+                                          width={200}
+                                          loading="lazy"
+                                          height={1000}
+                                          className="h-full object-contain "
+                                        />
                                       </div>
                                     </div>
                                   </>
