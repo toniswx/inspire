@@ -3,12 +3,15 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Inspire",
   description: "E-commerce from Antônio",
 };
+
+if (process.env.NODE_ENV === "production") disableReactDevTools();
 
 export default function RootLayout({
   children,
