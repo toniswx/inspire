@@ -5,7 +5,7 @@ export default function useGetProductsById(id: string) {
   React.useEffect(() => {
     async function fetchProductsListById() {
       try {
-        const response = await fetch(`http://localhost:3030/products/${id}`, {
+        const response = await fetch(`http://inspire-xlo7.vercel.app:3030/products/${id}`, {
           method: "GET",
         });
 

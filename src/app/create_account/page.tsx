@@ -41,7 +41,7 @@ function Page() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    fetch("http://localhost:3030/users", {
+    fetch("http://inspire-xlo7.vercel.app:3030/users", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       credentials: "include",
       headers: {

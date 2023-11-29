@@ -7,7 +7,7 @@ export default function useGetProducts() {
   React.useEffect(() => {
     async function fetchProductsList() {
       try {
-        const response = await fetch("http://localhost:3030/products", {
+        const response = await fetch("http://inspire-xlo7.vercel.app:3030/products", {
           method: "GET",
         });
 
