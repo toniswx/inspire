@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    fetch("http://inspire-xlo7.vercel.app:3030/users/login", {
+    fetch("https://inspire-xlo7.vercel.app/users/login", {
       method: "POST",
       credentials: "include",
       headers: {

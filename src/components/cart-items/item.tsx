@@ -48,7 +48,7 @@ function item() {
   useEffect(() => {
     if (userData === undefined) return;
     if (cartState === true) return;
-    fetch("http://inspire-xlo7.vercel.app:3030/update/usercart", {
+    fetch("https://inspire-xlo7.vercel.app/update/usercart", {
       method: "PATCH", // *GET, POST, PUT, DELETE, etc.
       credentials: "include", // include, *same-origin, omit
       headers: {
