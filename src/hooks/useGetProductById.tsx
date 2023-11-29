@@ -7,6 +7,8 @@ export default function useGetProductsById(id: string) {
       try {
         const response = await fetch(`https://inspire-xlo7.vercel.app/products/${id}`, {
           method: "GET",
+          credentials: "include",
+
         });
 
         const json = await response.json();
