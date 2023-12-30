@@ -26,7 +26,7 @@ function page() {
   const user = useUserData((state) => state.user);
   const handleCheckout = async () => {
     try {
-      const data = await fetch("https://inspire-xlo7.vercel.app/checkout", {
+      const data = await fetch("inspire-backend-bice.vercel.app/checkout", {
         method: "POST",
         credentials: "include", // include, *same-origin, omit
         headers: {
