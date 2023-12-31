@@ -5,7 +5,7 @@ export default function useGetProductsById(id: string) {
   React.useEffect(() => {
     async function fetchProductsListById() {
       try {
-        const response = await fetch(`https://inspire-backend-bice.vercel.app/products/${id}`, {
+        const response = await fetch(`https://inspire-backend2.vercel.app/products/${id}`, {
           method: "GET",
           credentials: "include",
 

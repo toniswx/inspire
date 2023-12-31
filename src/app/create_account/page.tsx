@@ -41,7 +41,7 @@ function Page() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    fetch("https://inspire-backend-bice.vercel.app/users", {
+    fetch("https://inspire-backend2.vercel.app/users", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       credentials: "include",
       headers: {

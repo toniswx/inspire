@@ -129,7 +129,7 @@ export default function Navbar() {
     console.log("change");
     if (userData === undefined) return;
     if (cartState === true) return;
-    fetch("https://inspire-backend-bice.vercel.app/update/usercart", {
+    fetch("https://inspire-backend2.vercel.app/update/usercart", {
       method: "PATCH", // *GET, POST, PUT, DELETE, etc.
       credentials: "include", // include, *same-origin, omit
       headers: {
