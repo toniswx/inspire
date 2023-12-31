@@ -56,7 +56,6 @@ function Login() {
         "Content-Type": "application/json",
         
       },
-      redirect: "follow",
       body: JSON.stringify({
         email: values.email,
         password: values.password,

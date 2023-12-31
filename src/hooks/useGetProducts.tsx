@@ -7,7 +7,7 @@ export default function useGetProducts() {
   React.useEffect(() => {
     async function fetchProductsList() {
       try {
-        const response = await fetch("https://inspire-backend-bice.vercel.app/products", {
+        const response = await fetch("https://inspire-backend2.vercel.app/products", {
           method: "GET",
           credentials: "include",
 
